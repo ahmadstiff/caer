@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Link from "next/link";
+import Link from "next/link"
 import React from "react";
 
 interface LogoProps {
   text: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ text }) => {
+const Logo: React.FC<LogoProps> = ({ text }: LogoProps) => {
   return (
     <Link
       href="/"

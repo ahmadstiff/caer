@@ -28,58 +28,73 @@ const ButtonConnectWallet = () => {
 
         if (!account || !chain) {
           return (
-            <button
-              onClick={openConnectModal}
-              type="button"
-              className="flex items-center justify-center space-x-1.5 px-6 py-2 rounded-3xl bg-primary text-primary-foreground font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span>Connect Wallet</span>
-            </button>
+            <div className="relative group">
+              <BackgroundGradient className="rounded-3xl p-[2px] shadow-lg">
+                <button
+                  onClick={openConnectModal}
+                  type="button"
+                  className="flex items-center justify-center space-x-1.5 px-6 py-1.5 rounded-3xl bg-[#1a1b23] text-white font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full"
+                >
+                  <span>Connect Wallet</span>
+                </button>
+              </BackgroundGradient>
+            </div>
           );
         }
 
         if (chain.unsupported) {
           return (
-            <button
-              onClick={openChainModal}
-              type="button"
-              className="flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-destructive text-destructive-foreground font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span>Wrong Network</span>
-              <ChevronDown className="w-4 h-4 ml-1" />
-            </button>
+            <div className="relative group">
+              <BackgroundGradient className="rounded-3xl p-[2px] shadow-lg">
+                <button
+                  onClick={openChainModal}
+                  type="button"
+                  className="flex items-center justify-center space-x-2 px-6 py-1.5 rounded-3xl bg-[#1a1b23] text-destructive-foreground font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full"
+                >
+                  <span>Wrong Network</span>
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+              </BackgroundGradient>
+            </div>
           );
         }
-
         return (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={openChainModal}
-              type="button"
-              className="flex items-center justify-center space-x-1 px-4 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 font-medium transition-all"
-            >
-              {chain.hasIcon && chain.iconUrl && (
-                <img
-                  src={chain.iconUrl || "/placeholder.svg"}
-                  alt={chain.name || "Chain icon"}
-                  className="w-4 h-4 rounded-full mr-1"
-                  style={{ background: chain.iconBackground }}
-                />
-              )}
-              <span>{chain.name}</span>
-              <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
-            </button>
+          <div className="flex items-center gap-3">
 
-            <button
-              onClick={openAccountModal}
-              type="button"
-              className="flex items-center justify-center space-x-1 px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80 font-medium transition-all"
-            >
-              <span className="truncate max-w-[120px]">
-                {account.displayName}
-              </span>
-              <ExternalLink className="w-3.5 h-3.5 ml-1 opacity-70" />
-            </button>
+            <div className="relative group">
+              <BackgroundGradient className="rounded-3xl p-[2px] shadow-lg">
+                <button
+                  onClick={openChainModal}
+                  type="button"
+                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-[#1a1b23] text-white hover:opacity-90 font-medium transition-all"
+                >
+                  {chain.hasIcon && chain.iconUrl && (
+                    <img
+                      src={chain.iconUrl || "/placeholder.svg"}
+                      alt={chain.name || "Chain icon"}
+                      className="w-4 h-4 rounded-full mr-1"
+                      style={{ background: chain.iconBackground }}
+                    />
+                  )}
+                  <span>{chain.name}</span>
+                  <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
+                </button>
+              </BackgroundGradient>
+            </div>
+
+            <div className="relative group">
+              <BackgroundGradient className="rounded-3xl p-[2px] shadow-lg">
+                <button
+                  onClick={openAccountModal}
+                  type="button"
+                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-[#1a1b23] text-white hover:opacity-90 font-medium transition-all"
+                >
+                  <span className="truncate max-w-[120px]">
+                    {account.displayName}
+                  </span>
+                </button>
+              </BackgroundGradient>
+            </div>
           </div>
         );
       }}
@@ -87,14 +102,4 @@ const ButtonConnectWallet = () => {
   );
 };
 
-const GradientConnectWallet = () => {
-  return (
-    <div className="relative group">
-      <BackgroundGradient className="rounded-xl p-[2px] shadow-lg">
-        <ButtonConnectWallet />
-      </BackgroundGradient>
-    </div>
-  );
-};
-
-export default GradientConnectWallet;
+export default ButtonConnectWallet;

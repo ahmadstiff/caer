@@ -27,7 +27,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         aria-label="Mobile menu"
       >
         <div className="flex justify-between items-center px-6 h-16 border-b border-white/10">
-          <span className="text-lg font-semibold bg-gradient-to-r from-[#b721ff] to-[#21d4fd] bg-clip-text text-transparent">
+          <span className="">
             Menu
           </span>
           <button
@@ -42,17 +42,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
 
         <div className="py-2">
           <NavLink href="/borrow" onClick={onClose}>
-            <PiggyBank className="w-5 h-5 group-hover:scale-110 transition-transform" />
             <span>Borrow</span>
           </NavLink>
 
           <NavLink href="/lending" onClick={onClose}>
-            <LineChart className="w-5 h-5 group-hover:scale-110 transition-transform" />
             <span>Lending</span>
           </NavLink>
 
           <NavLink href="/dummy" onClick={onClose}>
-            <LayoutDashboard className="w-5 h-5 group-hover:scale-110 transition-transform" />
             <span>Dummy</span>
           </NavLink>
 

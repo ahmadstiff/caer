@@ -49,10 +49,10 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="absolute inset-0 bg-[#0d0d21]/80 backdrop-blur-md border-b border-white/10" />
+      <div className="absolute inset-0backdrop-blur-md " />
       <div className="relative flex items-center justify-between h-16 px-4 md:px-16 max-w-9xl mx-auto">
         <div className="flex items-center space-x-8">
-          <Logo text="TraCrafter" />
+          <Logo text="CAER" />
           <DesktopNavigation />
         </div>
         <div className="hidden md:flex items-center space-x-6">

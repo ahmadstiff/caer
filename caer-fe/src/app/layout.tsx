@@ -46,9 +46,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
                 overlayBlur: "small",
               })}
             >
-              <div className="flex flex-col min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden relative">
-                {/* Animated background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-teal-500/10 animate-gradient-x bg-[length:200%_200%] blur-2xl md:blur-3xl pointer-events-none" />
+              <div className="">
                 <div className="relative z-99">
                   <Navbar />
                 </div>
