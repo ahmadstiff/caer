@@ -14,7 +14,7 @@ import {LendingPoolFactory} from "../src/LendingPoolFactory.sol";
 import {LendingPool} from "../src/LendingPool.sol";
 import {Position} from "../src/Position.sol";
 
-contract TracrafterScript is Script {
+contract CaerScript is Script {
     MockWETH public mockWETH;
     MockWBTC public mockWBTC;
     MockUSDC public mockUSDC;
