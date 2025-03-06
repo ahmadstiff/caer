@@ -485,4 +485,4 @@ contract LendingPoolFactoryTest is Test {
     }
 }
 
-// bikin gimana collateralnya supaya bisa dapet yield
+// karena user trading account nya bisa dijual atau gimana?
