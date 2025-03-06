@@ -11,4 +11,7 @@ contract MockPEPE is ERC20 {
     function mint(address to, uint256 amount) public {
         _mint(to, amount);
     }
+    function burn(uint256 amount) public {
+        _burn(msg.sender, amount);
+    }
 }
