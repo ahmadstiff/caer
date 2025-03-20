@@ -82,6 +82,12 @@ contract LendingPool is ReentrancyGuard {
         address owner;
     }
 
+    struct ListingDetails {
+        address addressPosition;
+        address tokenForPay;
+        uint256 price;
+    }
+
     uint256 public totalSupplyAssets;
     uint256 public totalSupplyShares;
     uint256 public totalBorrowAssets;
@@ -95,7 +101,7 @@ contract LendingPool is ReentrancyGuard {
     mapping(uint256 => address) public addressPositionOwners;
     mapping(uint256 => address) public addressPositionDetails;
     mapping(address => uint256) public addressArrayLocation;
-    mapping(uint256 => address) public tradingAccountListing;
+    mapping(uint256 => ListingDetails) public tradingAccountListing;
 
     address public collateralToken;
     address public borrowToken;
@@ -160,18 +166,19 @@ contract LendingPool is ReentrancyGuard {
     }
 
     //price(?)
-    function listingTradingPositions(uint256 _positionIndex) public {
+    function listingTradingPositions(uint256 _positionIndex, address _token, uint256 _price) public {
         address tempAddress = addressPositions[msg.sender][_positionIndex].addressPosition;
         if (tempAddress == address(0)) revert PositionUnavailable();
-        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id] != tempAddress) {
+        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id].addressPosition != tempAddress) {
             revert TradingAccountListed();
         }
-        tradingAccountListing[addressPositions[msg.sender][_positionIndex].id] = tempAddress;
+        tradingAccountListing[addressPositions[msg.sender][_positionIndex].id] =
+            ListingDetails(tempAddress, _token, _price);
     }
 
     function buyTradingPositions(uint256 _positionIndex) public {
         address tempAddress = addressPositions[msg.sender][_positionIndex].addressPosition;
-        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id] == tempAddress) {
+        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id].addressPosition == tempAddress) {
             revert ProhibitedToBuy();
         }
 
@@ -193,17 +200,17 @@ contract LendingPool is ReentrancyGuard {
         addressPositionOwners[_positionIndex] = msg.sender;
         addressPositionDetails[_positionIndex] = addressPositions[msg.sender][tempLength - 1].addressPosition;
         addressArrayLocation[addressPositions[msg.sender][tempLength - 1].addressPosition] = tempLength - 1;
-        tradingAccountListing[_positionIndex] = address(0);
+        tradingAccountListing[_positionIndex] = ListingDetails(address(0), address(0), 0);
     }
     /**
-    user A 1 BTC
-    user B pengen beli,
-    keuntungan jual beli trading position?
-
-    user B melakukan transaksi, user A fresh USDC masuk ke wallet
-
-    user A gabisa dapet USDC langsung, 
-    user A bisa supply liquidity supaya dapat yield, yield didapat dari orang yang borrow
+     * user A 1 BTC
+     * user B pengen beli,
+     * keuntungan jual beli trading position?
+     *
+     * user B melakukan transaksi, user A fresh USDC masuk ke wallet
+     *
+     * user A gabisa dapet USDC langsung, 
+     * user A bisa supply liquidity supaya dapat yield, yield didapat dari orang yang borrow
      */
 
     /**
