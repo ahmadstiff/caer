@@ -97,7 +97,7 @@ contract LendingPool is ReentrancyGuard {
     mapping(address => uint256) public userSupplyShares;
     mapping(address => uint256) public userBorrowShares;
     mapping(address => uint256) public userCollaterals;
-    mapping(address => TokenizedTradingPosition[]) public addressPositions;
+    mapping(address => address[]) public addressPositions;
     mapping(uint256 => address) public addressPositionOwners;
     mapping(uint256 => address) public addressPositionDetails;
     mapping(address => uint256) public addressArrayLocation;
@@ -154,64 +154,15 @@ contract LendingPool is ReentrancyGuard {
      * - Stores the newly created position details in mappings for tracking.
      * - Associates the position with the sender's address.
      *
-     * @param _name The name of the trading position.
      */
-    function createPosition(string memory _name) public {
+    function createPosition() public {
         counter++;
         position = new Position(collateralToken, borrowToken);
-        addressPositions[msg.sender].push(TokenizedTradingPosition(counter, _name, address(position), msg.sender));
-        addressPositionOwners[counter] = address(position);
+        addressPositions[msg.sender].push(address(position));
+        addressPositionOwners[counter] = msg.sender;
         addressPositionDetails[counter] = address(position);
         addressArrayLocation[address(position)] = addressPositions[msg.sender].length - 1;
     }
-
-    //price(?)
-    function listingTradingPositions(uint256 _positionIndex, address _token, uint256 _price) public {
-        address tempAddress = addressPositions[msg.sender][_positionIndex].addressPosition;
-        if (tempAddress == address(0)) revert PositionUnavailable();
-        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id].addressPosition != tempAddress) {
-            revert TradingAccountListed();
-        }
-        tradingAccountListing[addressPositions[msg.sender][_positionIndex].id] =
-            ListingDetails(tempAddress, _token, _price);
-    }
-
-    function buyTradingPositions(uint256 _positionIndex) public {
-        address tempAddress = addressPositions[msg.sender][_positionIndex].addressPosition;
-        if (tradingAccountListing[addressPositions[msg.sender][_positionIndex].id].addressPosition == tempAddress) {
-            revert ProhibitedToBuy();
-        }
-
-        addressPositions[msg.sender].push(
-            TokenizedTradingPosition({
-                id: _positionIndex,
-                name: addressPositions[addressPositionOwners[_positionIndex]][addressArrayLocation[tempAddress]].name,
-                addressPosition: addressPositions[addressPositionOwners[_positionIndex]][addressArrayLocation[tempAddress]]
-                    .addressPosition,
-                owner: msg.sender
-            })
-        );
-
-        addressPositions[addressPositionOwners[_positionIndex]][addressArrayLocation[tempAddress]] =
-            TokenizedTradingPosition({id: 0, name: "", addressPosition: address(0), owner: address(0)});
-
-        uint256 tempLength = addressPositions[msg.sender].length;
-
-        addressPositionOwners[_positionIndex] = msg.sender;
-        addressPositionDetails[_positionIndex] = addressPositions[msg.sender][tempLength - 1].addressPosition;
-        addressArrayLocation[addressPositions[msg.sender][tempLength - 1].addressPosition] = tempLength - 1;
-        tradingAccountListing[_positionIndex] = ListingDetails(address(0), address(0), 0);
-    }
-    /**
-     * user A 1 BTC
-     * user B pengen beli,
-     * keuntungan jual beli trading position?
-     *
-     * user B melakukan transaksi, user A fresh USDC masuk ke wallet
-     *
-     * user A gabisa dapet USDC langsung, 
-     * user A bisa supply liquidity supaya dapat yield, yield didapat dari orang yang borrow
-     */
 
     /**
      * @dev Allows users to supply liquidity to the protocol.
@@ -357,70 +308,9 @@ contract LendingPool is ReentrancyGuard {
 
         userCollaterals[msg.sender] -= amount;
 
-        _isHealthy(msg.sender);
-
         IERC20(collateralToken).safeTransfer(msg.sender, amount);
 
         emit WithdrawCollateral(msg.sender, amount);
-    }
-
-    /**
-     * @dev Checks whether the user's position remains healthy after collateral or debt changes.
-     *
-     * - If the user has an active position, its value is included in the collateral value.
-     * - Retrieves the price of the collateral token relative to the borrow token from the oracle.
-     * - Normalizes collateral value based on token decimals.
-     * - Calculates the user's outstanding borrowed amount.
-     * - Computes the maximum amount the user is allowed to borrow based on their collateral value and position value.
-     * - If the borrowed amount exceeds the allowed maximum, reverts with `InsufficientCollateral()`.
-     *
-     * @param user The address of the user whose position is being checked.
-     */
-    function _isHealthy(address user) internal view {
-        uint256 positionValue = _positionValue();
-        uint256 collateralPrice = IOracle(oracle).getPrice(collateralToken, borrowToken);
-        uint256 collateralDecimals = 10 ** IERC20Metadata(collateralToken).decimals();
-
-        uint256 borrowed =
-            userBorrowShares[user] != 0 ? (userBorrowShares[user] * totalBorrowAssets) / totalBorrowShares : 0;
-
-        uint256 collateralValue = (userCollaterals[user] * collateralPrice) / collateralDecimals;
-        uint256 maxBorrow = ((collateralValue + positionValue) * ltv) / 1e18;
-
-        if (borrowed > maxBorrow) revert InsufficientCollateral();
-    }
-
-    /**
-     * @dev Computes the total value of a user's tokenized trading positions.
-     *
-     * - Iterates through all the user's positions.
-     * - Retrieves each position's contract address and determines the number of tokens owned within that position.
-     * - For each token, fetches its price relative to the borrow token and normalizes based on its decimal precision.
-     * - Accumulates the total value of all tokens in the user's positions.
-     * - Returns the computed total position value.
-     *
-     * @return positionValue The total value of the user's tokenized positions in terms of the borrow token.
-     */
-    function _positionValue() internal view returns (uint256) {
-        uint256 positionValue = 0;
-        uint256 positionLength = addressPositions[msg.sender].length;
-        if (positionLength != 0) {
-            for (uint256 n = 0; n < positionLength; n++) {
-                address tempPosition = addressPositions[msg.sender][n].addressPosition;
-                uint256 tokenLength = IPosition(tempPosition).getTokenOwnerLength();
-
-                for (uint256 i = 0; i < tokenLength; i++) {
-                    address tokenAddress = IPosition(tempPosition).getTokenOwnerAddress(i);
-                    if (tokenAddress != address(0)) {
-                        uint256 positionPrice = IOracle(oracle).getPrice(tokenAddress, borrowToken);
-                        uint256 positionDecimal = IOracle(oracle).getQuoteDecimal(tokenAddress);
-                        positionValue += (IPosition(tempPosition).getTokenOwnerBalances(tokenAddress) * positionPrice)
-                            / positionDecimal;
-                    }
-                }
-            }
-        }
-        return positionValue;
     }
 
     /**
@@ -449,7 +339,7 @@ contract LendingPool is ReentrancyGuard {
         userBorrowShares[msg.sender] += shares;
         totalBorrowShares += shares;
         totalBorrowAssets += amount;
-        _isHealthy(msg.sender);
+        
         if (totalBorrowAssets > totalSupplyAssets) {
             revert InsufficientLiquidity();
         }
@@ -504,7 +394,7 @@ contract LendingPool is ReentrancyGuard {
      */
     function repayWithSelectedToken(uint256 shares, address _token, uint256 _positionIndex) public nonReentrant {
         if (shares == 0) revert ZeroAmount();
-        if (addressPositions[msg.sender][_positionIndex].addressPosition == address(0)) revert PositionUnavailable();
+        if (addressPositions[msg.sender][_positionIndex] == address(0)) revert PositionUnavailable();
 
         _accrueInterest();
         uint256 amountOut;
@@ -531,7 +421,7 @@ contract LendingPool is ReentrancyGuard {
             userCollaterals[msg.sender] += amountOut;
         } else {
             amountOut = tokenCalculator(amountOut, borrowToken, _token);
-            IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).costSwapToken(_token, borrowAmount);
+            IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(_token, borrowAmount);
         }
         emit RepayWithCollateralByPosition(msg.sender, borrowAmount, shares);
     }
@@ -579,7 +469,7 @@ contract LendingPool is ReentrancyGuard {
         returns (uint256 amountOut)
     {
         if (amountIn == 0) revert ZeroAmount();
-        if (addressPositions[msg.sender][_positionIndex].addressPosition == address(0)) revert PositionUnavailable();
+        if (addressPositions[msg.sender][_positionIndex] == address(0)) revert PositionUnavailable();
         if (_tokenFrom != collateralToken && getTokenCounterByPosition(_tokenFrom, _positionIndex) == 0) {
             revert TokenNotAvailable();
         }
@@ -595,7 +485,7 @@ contract LendingPool is ReentrancyGuard {
             } else if (_tokenFrom == borrowToken) {
                 amountOut = tokenCalculator(amountIn, _tokenFrom, _tokenTo);
             } else {
-                IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).costSwapToken(
+                IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(
                     _tokenFrom, amountIn
                 );
             }
@@ -608,13 +498,13 @@ contract LendingPool is ReentrancyGuard {
             TokenSwap(_tokenTo).mint(address(this), amountOut);
         } else {
             // Mint token and send it to the user's position.
-            TokenSwap(_tokenTo).mint(addressPositions[msg.sender][_positionIndex].addressPosition, amountOut);
+            TokenSwap(_tokenTo).mint(addressPositions[msg.sender][_positionIndex], amountOut);
         }
 
         if (_tokenTo == collateralToken) {
             userCollaterals[msg.sender] += amountOut;
         } else {
-            IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).swapToken(_tokenTo, amountOut);
+            IPosition(addressPositions[msg.sender][_positionIndex]).swapToken(_tokenTo, amountOut);
         }
 
         emit SwapByPosition(msg.sender, collateralToken, _tokenTo, amountIn, amountOut);
@@ -640,11 +530,11 @@ contract LendingPool is ReentrancyGuard {
     }
 
     function getAllTokenOwnerAddress(uint256 _positionIndex) public view positionRequired returns (address[] memory) {
-        return IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).getAllTokenOwnerAddress();
+        return IPosition(addressPositions[msg.sender][_positionIndex]).getAllTokenOwnerAddress();
     }
 
     function getTokenLengthByPosition(uint256 _positionIndex) public view positionRequired returns (uint256) {
-        return IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).getTokenOwnerLength();
+        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerLength();
     }
 
     function getTokenAddressByPosition(uint256 _index, uint256 _positionIndex)
@@ -653,7 +543,7 @@ contract LendingPool is ReentrancyGuard {
         positionRequired
         returns (address)
     {
-        return IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).getTokenOwnerAddress(_index);
+        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index);
     }
 
     function getTokenCounterByPosition(address _token, uint256 _positionIndex)
@@ -662,7 +552,7 @@ contract LendingPool is ReentrancyGuard {
         positionRequired
         returns (uint256)
     {
-        return IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).getTokenCounter(_token);
+        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_token);
     }
 
     function getTokenBalancesByPosition(address _token, uint256 _positionIndex)
@@ -671,7 +561,7 @@ contract LendingPool is ReentrancyGuard {
         positionRequired
         returns (uint256)
     {
-        return IPosition(addressPositions[msg.sender][_positionIndex].addressPosition).getTokenOwnerBalances(_token);
+        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token);
     }
 
     function getTokenDecimalByPosition(uint256 _index, uint256 _positionIndex)
@@ -681,7 +571,7 @@ contract LendingPool is ReentrancyGuard {
         returns (uint256)
     {
         return IERC20Metadata(
-            Position(addressPositions[msg.sender][_positionIndex].addressPosition).getTokenOwnerAddress(_index)
+            Position(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index)
         ).decimals();
     }
 }

@@ -7,6 +7,15 @@ import {LendingPool} from "./LendingPool.sol";
 contract Position {
     error TokenNotFound();
     error InsufficientBalance();
+    error TradingAccountListed();
+    error InvalidPrice();
+
+    struct ListingDetail {
+        bool isListing;
+        uint256 price;
+        string name;
+        address sellWithToken;
+    }
 
     address public collateralAssets;
     address public borrowAssets;
@@ -18,6 +27,8 @@ contract Position {
     mapping(address => uint256) public tokenListsId;
     mapping(address => uint256) public tokenBalances;
 
+    ListingDetail public listingDetail;
+    
     event Liquidate(address user);
     event SwapToken(address user, address token, uint256 amount);
 
@@ -43,13 +54,19 @@ contract Position {
 
     function costSwapToken(address _token, uint256 _amount) public {
         if (tokenListsId[_token] == 0) revert TokenNotFound();
-        // if (tokenBalances[_token] > _amount) revert InsufficientBalance();
-        // if (tokenBalances[_token] == _amount) tokenBalances[_token] = 0;
-        // else 
         tokenBalances[_token] -= _amount;
-        // IERC20(_token).approve(address(this), _amount);
-        // IERC20(_token).transferFrom(address(this), _token, _amount);
         emit SwapToken(msg.sender, _token, _amount);
+    }
+
+    function listingTradingPosition(address _token, uint256 _price, string memory _name) public {
+        if(listingDetail.isListing) revert TradingAccountListed();
+        listingDetail = ListingDetail(true, _price, _name, _token);
+    }
+
+    function buyTradingPosition(uint256 _price, address _buyer) public {
+        if(_price != listingDetail.price) revert InvalidPrice();
+        owner = _buyer;
+        listingDetail = ListingDetail(false, 0, "", address(0));
     }
 
     function getTokenOwnerLength() public view returns (uint256) {
