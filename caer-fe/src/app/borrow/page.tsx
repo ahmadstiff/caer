@@ -1,9 +1,12 @@
 import React from 'react'
+import BorrowPage from './_components/borrow-page'
 
-const BorrowPage = () => {
+const Page = () => {
   return (
-    <div>BorrowPage</div>
+    <div>
+      <BorrowPage />
+    </div>
   )
 }
 
-export default BorrowPage
+export default Page;

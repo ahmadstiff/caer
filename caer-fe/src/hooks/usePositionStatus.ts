@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useReadContract } from "wagmi";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { lendingPool } from "@/constants/addresses";
 import { Address } from "viem";
+
+
+const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 export function usePositionStatus() {
   const [hasPosition, setHasPosition] = useState(false);
