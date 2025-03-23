@@ -1,7 +1,7 @@
-interface BadgeProps {
-  children: React.ReactNode;
-  className?: string;
-  variant?: "outline" | "filled"; // Add a variant prop
+interface SupplyDialogProps {
+  poolId: number;
+  token: string;
+  apy: string;
 }
 
-export type { BadgeProps };
+export { SupplyDialogProps };
