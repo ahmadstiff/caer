@@ -129,24 +129,30 @@ contract LendingPoolFactoryTest is Test {
     }
 
     function test_borrow() public {
-        // bob borrow 8000 usdc
+        // bob borrow 1800 usdc
         uint256 borrowed = 1800e6;
+        uint256 lended = 1e18;
 
         // alice supply 1000 usdc
         helper_supply(alice, address(usdc), 10_000e6);
 
+        uint256 tempBobBalanceUSDC = IERC20(address(usdc)).balanceOf(bob);
+        uint256 tempBobBalanceWETH = IERC20(address(weth)).balanceOf(bob);
+
         vm.startPrank(bob);
         // bob supply 1 WETH as collateral
-        IERC20(weth).approve(address(lendingPool), 1e18);
-        lendingPool.supplyCollateralByPosition(1e18);
-
-        // vm.expectRevert(LendingPool.InsufficientCollateral.selector);
-        // lendingPool.borrowByPosition(1000e6);
+        IERC20(weth).approve(address(lendingPool), lended);
+        lendingPool.supplyCollateralByPosition(lended);
 
         // bob borrow usdc
         lendingPool.borrowByPosition(borrowed);
 
+        uint256 tempBobBalanceUSDC2 = IERC20(address(usdc)).balanceOf(bob);
+        uint256 tempBobBalanceWETH2 = IERC20(address(weth)).balanceOf(bob);
         vm.stopPrank();
+
+        assertEq(tempBobBalanceUSDC2 - tempBobBalanceUSDC, borrowed);
+        assertEq(tempBobBalanceWETH - lended, tempBobBalanceWETH2);
     }
 
     function test_withdraw() public {
@@ -162,8 +168,6 @@ contract LendingPoolFactoryTest is Test {
 
         lendingPool.withdraw(400e6);
         vm.stopPrank();
-
-        console.log("alice balance: ", IERC20(address(usdc)).balanceOf(alice));
     }
 
     function test_repay() public {

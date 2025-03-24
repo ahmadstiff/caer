@@ -42,6 +42,8 @@ interface IPosition {
     function counter() external view returns (uint256);
     function swapToken(address _token, uint256 _amount) external;
     function costSwapToken(address _token, uint256 _amount) external;
+    function listingTradingPosition(address _token, uint256 _price, string memory _name) external;
+    function buyTradingPosition(uint256 _price, address _buyer) external;
 }
 
 contract LendingPool is ReentrancyGuard {
@@ -164,6 +166,20 @@ contract LendingPool is ReentrancyGuard {
         addressArrayLocation[address(position)] = addressPositions[msg.sender].length - 1;
     }
 
+    function listingTrading(uint256 _positionIndex, address _token, uint256 _price, string memory _name) public {
+        address tempAddress = addressPositionOwners[_positionIndex];
+        IPosition(addressPositions[tempAddress][_positionIndex]).listingTradingPosition(_token, _price, _name);
+    }
+
+    function buyTradingAccount(uint256 _positionIndex, uint256 _price, address _buyer) public {
+        address tempAddress = addressPositionOwners[_positionIndex];
+        IPosition(addressPositions[tempAddress][_positionIndex]).buyTradingPosition(_price, _buyer);
+
+        addressPositions[msg.sender].push(addressPositions[tempAddress][_positionIndex]);
+        addressPositions[tempAddress][_positionIndex] = address(0);
+        addressPositionOwners[_positionIndex] = msg.sender;
+        addressArrayLocation[addressPositionDetails[_positionIndex]] = addressPositions[msg.sender].length - 1;
+    }
     /**
      * @dev Allows users to supply liquidity to the protocol.
      * The supplied tokens increase the total available assets,
@@ -339,7 +355,7 @@ contract LendingPool is ReentrancyGuard {
         userBorrowShares[msg.sender] += shares;
         totalBorrowShares += shares;
         totalBorrowAssets += amount;
-        
+
         if (totalBorrowAssets > totalSupplyAssets) {
             revert InsufficientLiquidity();
         }
@@ -485,9 +501,7 @@ contract LendingPool is ReentrancyGuard {
             } else if (_tokenFrom == borrowToken) {
                 amountOut = tokenCalculator(amountIn, _tokenFrom, _tokenTo);
             } else {
-                IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(
-                    _tokenFrom, amountIn
-                );
+                IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(_tokenFrom, amountIn);
             }
         }
 
@@ -570,8 +584,7 @@ contract LendingPool is ReentrancyGuard {
         positionRequired
         returns (uint256)
     {
-        return IERC20Metadata(
-            Position(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index)
-        ).decimals();
+        return IERC20Metadata(Position(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index))
+            .decimals();
     }
 }

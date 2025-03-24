@@ -3,12 +3,17 @@ pragma solidity ^0.8.13;
 
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {LendingPool} from "./LendingPool.sol";
+import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuard} from "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 
-contract Position {
+contract Position is ReentrancyGuard {
+    using SafeERC20 for IERC20; // fungsi dari IERC20 akan ketambahan SafeERC20
+
     error TokenNotFound();
     error InsufficientBalance();
     error TradingAccountListed();
     error InvalidPrice();
+    error NotForSale();
 
     struct ListingDetail {
         bool isListing;
@@ -63,8 +68,10 @@ contract Position {
         listingDetail = ListingDetail(true, _price, _name, _token);
     }
 
-    function buyTradingPosition(uint256 _price, address _buyer) public {
+    function buyTradingPosition(uint256 _price, address _buyer) public nonReentrant {
         if(_price != listingDetail.price) revert InvalidPrice();
+        if(!listingDetail.isListing) revert NotForSale();
+        IERC20(listingDetail.sellWithToken).safeTransferFrom(_buyer, owner, _price);
         owner = _buyer;
         listingDetail = ListingDetail(false, 0, "", address(0));
     }
