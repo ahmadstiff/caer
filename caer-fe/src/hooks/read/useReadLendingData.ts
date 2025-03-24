@@ -1,4 +1,4 @@
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { Address } from "viem";
 
@@ -8,6 +8,15 @@ export const useReadLendingData = (
   userAddress?: Address,
   tokenAddress?: Address
 ) => {
+  const { address } = useAccount();
+  
+  const { data: checkAvailability } = useReadContract({
+    address: lendingPool,
+    abi: poolAbi,
+    functionName: "addressPosition",
+    args: [address],
+  });
+  
   const { data: borrowAddress } = useReadContract({
     address: lendingPool,
     abi: poolAbi,
@@ -61,6 +70,7 @@ export const useReadLendingData = (
   });
 
   return {
+    checkAvailability,
     totalSupplyAssets,
     totalSupplyShares,
     collateralAddress,
