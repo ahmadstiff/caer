@@ -31,6 +31,7 @@ interface IOracle {
 
 interface TokenSwap {
     function mint(address _to, uint256 _amount) external;
+    function burn(address _spender, uint256 _amount) external;
 }
 
 interface IPosition {
@@ -195,6 +196,7 @@ contract LendingPool is ReentrancyGuard {
      *
      * @param amount The amount of tokens to supply.
      */
+
     function supply(uint256 amount) public nonReentrant {
         if (amount == 0) revert ZeroAmount();
         _accrueInterest();
@@ -415,13 +417,20 @@ contract LendingPool is ReentrancyGuard {
         _accrueInterest();
         uint256 amountOut;
         uint256 borrowAmount = ((shares * totalBorrowAssets) / totalBorrowShares);
+        uint256 tempBalance = _token == collateralToken
+            ? userCollaterals[msg.sender]
+            : IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token);
         if (_token == collateralToken) {
             amountOut = tokenCalculator(userCollaterals[msg.sender], collateralToken, borrowToken);
             userCollaterals[msg.sender] = 0;
-        } else if (getTokenCounterByPosition(_token, _positionIndex) == 0) {
+        } else if (IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_token) == 0) {
             revert TokenNotAvailable();
         } else {
-            amountOut = tokenCalculator(getTokenBalancesByPosition(_token, _positionIndex), _token, borrowToken);
+            amountOut = tokenCalculator(
+                IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token),
+                _token,
+                borrowToken
+            );
         }
 
         userBorrowShares[msg.sender] -= shares;
@@ -435,9 +444,15 @@ contract LendingPool is ReentrancyGuard {
         if (_token == collateralToken) {
             amountOut = tokenCalculator(amountOut, borrowToken, collateralToken);
             userCollaterals[msg.sender] += amountOut;
+            TokenSwap(collateralToken).burn(address(this), tempBalance - userCollaterals[msg.sender]);
         } else {
             amountOut = tokenCalculator(amountOut, borrowToken, _token);
             IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(_token, borrowAmount);
+            //burn token
+            TokenSwap(_token).burn(
+                addressPositions[msg.sender][_positionIndex],
+                tempBalance - IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token)
+            );
         }
         emit RepayWithCollateralByPosition(msg.sender, borrowAmount, shares);
     }
@@ -486,7 +501,10 @@ contract LendingPool is ReentrancyGuard {
     {
         if (amountIn == 0) revert ZeroAmount();
         if (addressPositions[msg.sender][_positionIndex] == address(0)) revert PositionUnavailable();
-        if (_tokenFrom != collateralToken && getTokenCounterByPosition(_tokenFrom, _positionIndex) == 0) {
+        if (
+            _tokenFrom != collateralToken
+                && IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_tokenFrom) == 0
+        ) {
             revert TokenNotAvailable();
         }
 
@@ -495,7 +513,7 @@ contract LendingPool is ReentrancyGuard {
             IERC20(_tokenFrom).safeTransferFrom(address(this), _tokenFrom, amountIn);
             userCollaterals[msg.sender] -= amountIn;
         } else {
-            uint256 balances = getTokenBalancesByPosition(_tokenFrom, _positionIndex);
+            uint256 balances = IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_tokenFrom);
             if (balances < amountIn) {
                 revert InsufficientToken();
             } else if (_tokenFrom == borrowToken) {
@@ -541,50 +559,5 @@ contract LendingPool is ReentrancyGuard {
         (uint256 _realPrice,) = IOracle(oracle).getPriceTrade(_tokenTo, _tokenFrom);
         uint256 amountOut = _amount * IOracle(oracle).getQuoteDecimal(_tokenTo) / _realPrice;
         return amountOut;
-    }
-
-    function getAllTokenOwnerAddress(uint256 _positionIndex) public view positionRequired returns (address[] memory) {
-        return IPosition(addressPositions[msg.sender][_positionIndex]).getAllTokenOwnerAddress();
-    }
-
-    function getTokenLengthByPosition(uint256 _positionIndex) public view positionRequired returns (uint256) {
-        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerLength();
-    }
-
-    function getTokenAddressByPosition(uint256 _index, uint256 _positionIndex)
-        public
-        view
-        positionRequired
-        returns (address)
-    {
-        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index);
-    }
-
-    function getTokenCounterByPosition(address _token, uint256 _positionIndex)
-        public
-        view
-        positionRequired
-        returns (uint256)
-    {
-        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_token);
-    }
-
-    function getTokenBalancesByPosition(address _token, uint256 _positionIndex)
-        public
-        view
-        positionRequired
-        returns (uint256)
-    {
-        return IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token);
-    }
-
-    function getTokenDecimalByPosition(uint256 _index, uint256 _positionIndex)
-        public
-        view
-        positionRequired
-        returns (uint256)
-    {
-        return IERC20Metadata(Position(addressPositions[msg.sender][_positionIndex]).getTokenOwnerAddress(_index))
-            .decimals();
     }
 }

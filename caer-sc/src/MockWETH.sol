@@ -11,7 +11,8 @@ contract MockWETH is ERC20 {
     function mint(address to, uint256 amount) public {
         _mint(to, amount);
     }
-    function burn(uint256 amount) public {
-        _burn(msg.sender, amount);
+
+    function burn(address spender, uint256 amount) public {
+        _burn(spender, amount);
     }
 }

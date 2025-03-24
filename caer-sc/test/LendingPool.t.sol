@@ -21,6 +21,19 @@ interface IOracle {
     function priceCollateral(address _token) external view returns (uint256);
 }
 
+interface IPosition {
+    function getTokenOwnerLength() external view returns (uint256);
+    function getTokenOwnerBalances(address _token) external view returns (uint256);
+    function getTokenCounter(address _token) external view returns (uint256);
+    function getTokenOwnerAddress(uint256 _counter) external view returns (address);
+    function getAllTokenOwnerAddress() external view returns (address[] memory);
+    function counter() external view returns (uint256);
+    function swapToken(address _token, uint256 _amount) external;
+    function costSwapToken(address _token, uint256 _amount) external;
+    function listingTradingPosition(address _token, uint256 _price, string memory _name) external;
+    function buyTradingPosition(uint256 _price, address _buyer) external;
+}
+
 contract LendingPoolFactoryTest is Test {
     LendingPoolFactory public lendingPoolFactory;
     LendingPool public lendingPool;
@@ -227,7 +240,7 @@ contract LendingPoolFactoryTest is Test {
         console.log("----- weth swap to usdc");
         console.log("lending pool collaterals", lendingPool.userCollaterals(bob), 0);
         console.log("balance of lending pool weth", IERC20(address(weth)).balanceOf(address(lendingPool)));
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
         console.log(
             "position usdc IERC20 balance", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0))
         );
@@ -236,7 +249,7 @@ contract LendingPoolFactoryTest is Test {
         console.log("----- usdc swap to weth");
         console.log("lending pool collaterals", lendingPool.userCollaterals(bob));
         console.log("balance of lending pool weth", IERC20(address(weth)).balanceOf(address(lendingPool)));
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
         console.log(
             "position usdc IERC20 balance", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0))
         );
@@ -246,7 +259,7 @@ contract LendingPoolFactoryTest is Test {
         lendingPool.repayWithSelectedToken(45e6, address(weth), 0); // 45 shares == 49.5 USDC
         console.log("lending pool collaterals", lendingPool.userCollaterals(bob));
         console.log("balance of lending pool weth", IERC20(address(weth)).balanceOf(address(lendingPool)));
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
         console.log(
             "balance of lending pool usdc", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0))
         );
@@ -280,19 +293,19 @@ contract LendingPoolFactoryTest is Test {
         lendingPool.swapTokenByPosition(address(usdc), address(weth), 15e18, 0);
         console.log("----- weth swap to usdc");
         console.log("lending pool collaterals", lendingPool.userCollaterals(bob));
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39502.736731
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39502.736731
         console.log("-----");
 
         lendingPool.repayWithSelectedToken(45e6, address(weth), 0);
         console.log("----- repay with weth");
         console.log("lending pool collaterals", lendingPool.userCollaterals(bob));
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39552.236731 harusnya berkurang
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39552.236731 harusnya berkurang
         console.log("total borrow shares", lendingPool.totalBorrowShares());
         console.log("-----");
 
         lendingPool.repayWithSelectedToken(45e6, address(usdc), 0);
         console.log("----- repay with usdc");
-        console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39552.236731 harusnya berkurang
+        // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39552.236731 harusnya berkurang
         console.log("total borrow shares", lendingPool.totalBorrowShares());
         console.log("-----");
         console.log("calculator", lendingPool.tokenCalculator(1e18, address(weth), address(usdc)));
@@ -339,7 +352,7 @@ contract LendingPoolFactoryTest is Test {
         vm.startPrank(bob);
         uint256 amountOut2 = lendingPool.swapTokenByPosition(address(pepe), address(weth), 0.1e18, 0);
         console.log("amountOut2", amountOut2); // 51485630508031539802751413
-        console.log("-------dapet berapa pepe=====", lendingPool.getTokenBalancesByPosition(address(pepe), 0));
+        // console.log("-------dapet berapa pepe=====", lendingPool.getTokenBalancesByPosition(address(pepe), 0));
 
         vm.expectRevert(LendingPool.TokenNotAvailable.selector);
         uint256 amountOut3 = lendingPool.swapTokenByPosition(address(pepe), address(usdc), 526703156, 0);
@@ -363,7 +376,7 @@ contract LendingPoolFactoryTest is Test {
         lendingPool.supplyCollateralByPosition(5e18);
 
         console.log("----------------------------------------------------------------");
-        console.log("Bob supply Assets", lendingPool.userCollaterals(bob));
+        console.log("Bob supply Assets 5eth", lendingPool.userCollaterals(bob));
         console.log("----------------------------------------------------------------");
 
         lendingPool.borrowByPosition(500e6);
@@ -375,45 +388,60 @@ contract LendingPoolFactoryTest is Test {
         vm.warp(block.timestamp + 365 days);
         lendingPool.accrueInterest();
 
+        console.log("----------------------------------------------------------------");
+        console.log("Bob supply Shares", lendingPool.totalSupplyShares());
+        console.log("Bob supply Assets", lendingPool.totalSupplyAssets());
+        console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
+        console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
+        console.log("----------------------------------------------------------------");
+
         lendingPool.swapTokenByPosition(address(usdc), address(weth), 1e18, 0);
 
         console.log("----------------------------------------------------------------");
-        console.log("Bob usdc", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
         console.log("Bob weth", lendingPool.userCollaterals(bob));
         console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
         console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
+        console.log("Bob usdc ierc 20", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0)));
+        console.log(
+            "Bob usdc position", IPosition(lendingPool.addressPositions(bob, 0)).getTokenOwnerBalances(address(usdc))
+        );
         console.log("----------------------------------------------------------------");
-
         lendingPool.repayWithSelectedToken(100e6, address(usdc), 0);
 
         console.log("----------------------------------------------------------------");
-        console.log("Bob usdc", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
         console.log("Bob weth", lendingPool.userCollaterals(bob));
         console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
         console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
-
-        console.log("collateral", lendingPool.collateralToken());
-        console.log("borrow", lendingPool.borrowToken());
-        console.log("tokenownerlength", lendingPool.getTokenLengthByPosition(0));
+        console.log("Bob usdc ierc 20", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0)));
+        console.log(
+            "Bob usdc position", IPosition(lendingPool.addressPositions(bob, 0)).getTokenOwnerBalances(address(usdc))
+        );
         console.log("----------------------------------------------------------------");
         vm.warp(block.timestamp + 365 days);
 
         lendingPool.borrowByPosition(100e6);
+        console.log("----------------------------------------------------------------");
+        console.log("Bob weth", lendingPool.userCollaterals(bob));
+        console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
+        console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
+        console.log("Bob usdc ierc 20", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0)));
+        console.log(
+            "Bob usdc position", IPosition(lendingPool.addressPositions(bob, 0)).getTokenOwnerBalances(address(usdc))
+        );
+        console.log("----------------------------------------------------------------");
 
-        // console.log("Bob usdc", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
-        // console.log("Bob weth", lendingPool.userCollaterals(bob));
-        // console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
-        // console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
         vm.warp(block.timestamp + 365 days);
-        uint256 borrowAmount = ((100e6 * lendingPool.totalBorrowAssets()) / lendingPool.totalBorrowShares());
-
-        console.log("borrowAmount", borrowAmount);
 
         lendingPool.repayWithSelectedToken(100e6, address(usdc), 0);
         console.log("----------------------------------------------------------------");
-        console.log("Bob usdc", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
+        console.log("Bob weth", lendingPool.userCollaterals(bob));
+        console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
+        console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
+        console.log("Bob usdc ierc 20", IERC20(address(usdc)).balanceOf(lendingPool.addressPositions(bob, 0)));
+        console.log(
+            "Bob usdc position", IPosition(lendingPool.addressPositions(bob, 0)).getTokenOwnerBalances(address(usdc))
+        );
         console.log("----------------------------------------------------------------");
-        // lendingPool.borrowByPosition(100e6);
 
         vm.stopPrank();
     }
