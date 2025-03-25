@@ -516,10 +516,9 @@ contract LendingPool is ReentrancyGuard {
             uint256 balances = IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_tokenFrom);
             if (balances < amountIn) {
                 revert InsufficientToken();
-            } else if (_tokenFrom == borrowToken) {
-                amountOut = tokenCalculator(amountIn, _tokenFrom, _tokenTo);
             } else {
                 IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(_tokenFrom, amountIn);
+                TokenSwap(_tokenFrom).burn(addressPositions[msg.sender][_positionIndex], amountIn);
             }
         }
 
