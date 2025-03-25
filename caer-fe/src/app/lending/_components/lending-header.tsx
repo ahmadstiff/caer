@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function PositionHeader() {
+export default function LendingHeader() {
   return (
     <div className="mt-15 p-6  min-h-screen">
       <div className="max-w-7xl mx-auto space-y-8">

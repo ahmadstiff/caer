@@ -9,14 +9,14 @@ export const useReadLendingData = (
   tokenAddress?: Address
 ) => {
   const { address } = useAccount();
-  
+
   const { data: checkAvailability } = useReadContract({
     address: lendingPool,
     abi: poolAbi,
     functionName: "addressPosition",
     args: [address],
   });
-  
+
   const { data: borrowAddress } = useReadContract({
     address: lendingPool,
     abi: poolAbi,
@@ -69,6 +69,20 @@ export const useReadLendingData = (
     args: [userAddress],
   });
 
+  const { data: userSupply } = useReadContract({
+    address: lendingPool,
+    abi: poolAbi,
+    functionName: "userSupplyShares",
+    args: [address],
+
+  });
+
+  const { data: supplyAssets } = useReadContract({
+    address: lendingPool,
+    abi: poolAbi,
+    functionName: "totalSupplyAssets",
+    args: [],
+  });
   return {
     checkAvailability,
     totalSupplyAssets,
@@ -79,5 +93,6 @@ export const useReadLendingData = (
     tokenBalanceByPosition,
     totalBorrowAssets,
     totalBorrowShares,
+    userSupply 
   };
 };

@@ -18,14 +18,14 @@ import PositionToken from "./position-token";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 import { useBorrowBalance } from "@/hooks/useBorrowBalance";
 
-const PositionCard = ({ userAddress }: { userAddress: Address }) => {
+const PositionCard = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const {
     checkAvailability,
     collateralAddress,
     borrowAddress,
     userCollateral,
-  } = useReadLendingData(userAddress);
+  } = useReadLendingData();
 
   const userBorrowShares = useBorrowBalance();
 
@@ -43,9 +43,9 @@ const PositionCard = ({ userAddress }: { userAddress: Address }) => {
 
   return (
     <Card className="bg-slate-900/50 border border-slate-800 shadow-lg overflow-hidden">
-      <CardHeader className="pb-2 border-b border-slate-800/50">
+      <CardHeader className="pb-2 border-b py-2 border-slate-800/50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 py-2">
             <CircleDollarSign className="h-5 w-5 text-blue-500" />
             <CardTitle className="text-xl text-white">Your Position</CardTitle>
           </div>
@@ -64,7 +64,7 @@ const PositionCard = ({ userAddress }: { userAddress: Address }) => {
         </div>
       </CardHeader>
       {isExpanded && (
-        <CardContent className="p-4 md:p-6">
+        <CardContent className="px-4 md:px-6">
           <div className="space-y-6">
             <div className="grid grid-cols-3 gap-4 p-4 bg-slate-800/30 rounded-lg">
               <div className="space-y-2 text-center">

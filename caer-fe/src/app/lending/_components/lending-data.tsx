@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-const PositionTable = () => {
+const LendingData = () => {
   return (
     <div>
       <Button>Available Pools</Button>
@@ -16,4 +16,4 @@ const PositionTable = () => {
   );
 };
 
-export default PositionTable;
+export default LendingData;
