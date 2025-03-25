@@ -2,27 +2,12 @@
 pragma solidity ^0.8.13;
 
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 import {Position} from "./Position.sol";
 
-interface ISwapRouter {
-    struct ExactInputSingleParams {
-        address tokenIn;
-        address tokenOut;
-        uint24 fee;
-        address recipient;
-        uint256 deadline;
-        uint256 amountIn;
-        uint256 amountOutMinimum;
-        uint160 sqrtPriceLimitX96;
-    }
-
-    function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256 amountOut);
-}
-
 interface IOracle {
+    function tokenCalculator(uint256 _amount, address _tokenFrom, address _tokenTo) external view returns (uint256);
     function getPrice(address _collateral, address _borrow) external view returns (uint256);
     function getPriceTrade(address _tokenFrom, address _tokenTo) external view returns (uint256, uint256);
     function getQuoteDecimal(address _token) external view returns (uint256);
@@ -65,7 +50,6 @@ contract LendingPool is ReentrancyGuard {
     error TradingAccountListed();
     error ZeroAmount();
 
-    event CreatePosition(address user, address positionAddress);
     event Supply(address user, uint256 amount, uint256 shares);
     event Withdraw(address user, uint256 amount, uint256 shares);
     event SupplyCollateralByPosition(address user, uint256 amount);
@@ -75,21 +59,9 @@ contract LendingPool is ReentrancyGuard {
     event RepayWithCollateralByPosition(address user, uint256 amount, uint256 shares);
     event Flashloan(address user, address token, uint256 amount);
     event SwapByPosition(address user, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
+    event CreatePosition(address user, address positionAddress);
 
     Position public position;
-
-    struct TokenizedTradingPosition {
-        uint256 id;
-        string name;
-        address addressPosition;
-        address owner;
-    }
-
-    struct ListingDetails {
-        address addressPosition;
-        address tokenForPay;
-        uint256 price;
-    }
 
     uint256 public totalSupplyAssets;
     uint256 public totalSupplyShares;
@@ -104,7 +76,6 @@ contract LendingPool is ReentrancyGuard {
     mapping(uint256 => address) public addressPositionOwners;
     mapping(uint256 => address) public addressPositionDetails;
     mapping(address => uint256) public addressArrayLocation;
-    mapping(uint256 => ListingDetails) public tradingAccountListing;
 
     address public collateralToken;
     address public borrowToken;
@@ -165,6 +136,7 @@ contract LendingPool is ReentrancyGuard {
         addressPositionOwners[counter] = msg.sender;
         addressPositionDetails[counter] = address(position);
         addressArrayLocation[address(position)] = addressPositions[msg.sender].length - 1;
+        emit CreatePosition(msg.sender, address(position));
     }
 
     function listingTrading(uint256 _positionIndex, address _token, uint256 _price, string memory _name) public {
@@ -413,24 +385,19 @@ contract LendingPool is ReentrancyGuard {
     function repayWithSelectedToken(uint256 shares, address _token, uint256 _positionIndex) public nonReentrant {
         if (shares == 0) revert ZeroAmount();
         if (addressPositions[msg.sender][_positionIndex] == address(0)) revert PositionUnavailable();
+        if (IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_token) == 0) {
+            revert TokenNotAvailable();
+        }
 
         _accrueInterest();
         uint256 amountOut;
         uint256 borrowAmount = ((shares * totalBorrowAssets) / totalBorrowShares);
         uint256 tempBalance = _token == collateralToken
             ? userCollaterals[msg.sender]
-            : IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token);
+            : IERC20(_token).balanceOf(addressPositions[msg.sender][_positionIndex]);
+        amountOut = IOracle(oracle).tokenCalculator(tempBalance, _token, borrowToken);
         if (_token == collateralToken) {
-            amountOut = tokenCalculator(userCollaterals[msg.sender], collateralToken, borrowToken);
             userCollaterals[msg.sender] = 0;
-        } else if (IPosition(addressPositions[msg.sender][_positionIndex]).getTokenCounter(_token) == 0) {
-            revert TokenNotAvailable();
-        } else {
-            amountOut = tokenCalculator(
-                IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token),
-                _token,
-                borrowToken
-            );
         }
 
         userBorrowShares[msg.sender] -= shares;
@@ -441,33 +408,18 @@ contract LendingPool is ReentrancyGuard {
         /**
          * @dev After repayment, converts any excess borrowToken back to the original token type.
          */
+        amountOut = IOracle(oracle).tokenCalculator(amountOut, borrowToken, _token);
         if (_token == collateralToken) {
-            amountOut = tokenCalculator(amountOut, borrowToken, collateralToken);
             userCollaterals[msg.sender] += amountOut;
             TokenSwap(collateralToken).burn(address(this), tempBalance - userCollaterals[msg.sender]);
         } else {
-            amountOut = tokenCalculator(amountOut, borrowToken, _token);
             IPosition(addressPositions[msg.sender][_positionIndex]).costSwapToken(_token, borrowAmount);
-            //burn token
             TokenSwap(_token).burn(
                 addressPositions[msg.sender][_positionIndex],
-                tempBalance - IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_token)
+                tempBalance - IERC20(_token).balanceOf(addressPositions[msg.sender][_positionIndex])
             );
         }
         emit RepayWithCollateralByPosition(msg.sender, borrowAmount, shares);
-    }
-
-    function FlashLoan(address token, uint256 amount, bytes calldata data) external {
-        if (amount == 0) revert ZeroAmount();
-
-        IERC20(token).safeTransfer(msg.sender, amount);
-
-        (bool success,) = address(msg.sender).call(data);
-        if (!success) revert FlashloanFailed();
-
-        IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
-
-        emit Flashloan(msg.sender, token, amount);
     }
 
     /**
@@ -509,11 +461,10 @@ contract LendingPool is ReentrancyGuard {
         }
 
         if (_tokenFrom == collateralToken) {
-            IERC20(_tokenFrom).approve(address(this), amountIn);
-            IERC20(_tokenFrom).safeTransferFrom(address(this), _tokenFrom, amountIn);
+            TokenSwap(_tokenFrom).burn(address(this), amountIn);
             userCollaterals[msg.sender] -= amountIn;
         } else {
-            uint256 balances = IPosition(addressPositions[msg.sender][_positionIndex]).getTokenOwnerBalances(_tokenFrom);
+            uint256 balances = IERC20(_tokenFrom).balanceOf(addressPositions[msg.sender][_positionIndex]);
             if (balances < amountIn) {
                 revert InsufficientToken();
             } else {
@@ -522,41 +473,18 @@ contract LendingPool is ReentrancyGuard {
             }
         }
 
-        amountOut = tokenCalculator(amountIn, _tokenFrom, _tokenTo);
+        amountOut = IOracle(oracle).tokenCalculator(amountIn, _tokenFrom, _tokenTo);
 
         if (_tokenTo == collateralToken) {
             // Mint collateral token and send it to the lending pool.
             TokenSwap(_tokenTo).mint(address(this), amountOut);
+            userCollaterals[msg.sender] += amountOut;
         } else {
             // Mint token and send it to the user's position.
             TokenSwap(_tokenTo).mint(addressPositions[msg.sender][_positionIndex], amountOut);
-        }
-
-        if (_tokenTo == collateralToken) {
-            userCollaterals[msg.sender] += amountOut;
-        } else {
             IPosition(addressPositions[msg.sender][_positionIndex]).swapToken(_tokenTo, amountOut);
         }
 
         emit SwapByPosition(msg.sender, collateralToken, _tokenTo, amountIn, amountOut);
-    }
-
-    /**
-     * @dev Calculates the output amount when swapping between two tokens.
-     *
-     * - Uses an external oracle to get the real-time price of the `_tokenTo` relative to `_tokenFrom`.
-     * - Retrieves the quote decimal of `_tokenTo` for accurate conversion.
-     * - Computes the output amount based on the provided `_amount` and exchange rate.
-     * - The function is `view`, meaning it does not modify state but provides a calculated value.
-     *
-     * @param _amount The amount of `_tokenFrom` being exchanged.
-     * @param _tokenFrom The address of the token being swapped from.
-     * @param _tokenTo The address of the token being swapped to.
-     * @return amountOut The calculated amount of `_tokenTo` that will be received.
-     */
-    function tokenCalculator(uint256 _amount, address _tokenFrom, address _tokenTo) public view returns (uint256) {
-        (uint256 _realPrice,) = IOracle(oracle).getPriceTrade(_tokenTo, _tokenFrom);
-        uint256 amountOut = _amount * IOracle(oracle).getQuoteDecimal(_tokenTo) / _realPrice;
-        return amountOut;
     }
 }

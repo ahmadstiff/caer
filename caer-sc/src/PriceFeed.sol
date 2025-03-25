@@ -24,12 +24,6 @@ interface IAggregatorV3 {
 contract PriceFeed {
     error QuotePriceZero();
     error BasePriceZero();
-    // address quoteFeed = 0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c; // BTC/USD
-    // address quoteFeed = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419; // ETH/USD
-    // address baseFeed = 0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6; // USDC/USD
-
-    // address quoteFeed;
-    // address baseFeed;
 
     struct PriceLists {
         string name;
@@ -135,7 +129,13 @@ contract PriceFeed {
         return (quotePrice * decimal) / basePrice;
     }
 
+    function tokenCalculator(uint256 _amount, address _tokenFrom, address _tokenTo) public view returns (uint256) {
+        (uint256 _realPrice,) = getPriceTrade(_tokenTo, _tokenFrom);
+        uint256 amountOut = _amount * getQuoteDecimal(_tokenTo) / _realPrice;
+        return amountOut;
+    }
     //USDC - PEPE
+
     function getPriceTrade(address _tokenFrom, address _tokenTo) public view returns (uint256, uint256) {
         uint256 quotePrice;
         uint256 basePrice;

@@ -308,7 +308,7 @@ contract LendingPoolFactoryTest is Test {
         // console.log("position usdc balance", lendingPool.getTokenBalancesByPosition(address(usdc), 0)); // 39552.236731 harusnya berkurang
         console.log("total borrow shares", lendingPool.totalBorrowShares());
         console.log("-----");
-        console.log("calculator", lendingPool.tokenCalculator(1e18, address(weth), address(usdc)));
+        // console.log("calculator", lendingPool.tokenCalculator(1e18, address(weth), address(usdc)));
         vm.stopPrank();
     }
 
