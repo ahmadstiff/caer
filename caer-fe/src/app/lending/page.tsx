@@ -1,12 +1,12 @@
-import PositionHeader  from "@/components/card/borrow/position-header";
-import PositionTable from "@/components/card/borrow/position-table";
+import LendingHeader from "./_components/lending-header";
+import LendingData from "./_components/lending-data";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <PositionHeader />
-      <PositionTable />
+      <LendingHeader />
+      <LendingData />
     </div>
   );
 };

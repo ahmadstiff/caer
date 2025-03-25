@@ -1,6 +1,6 @@
 import { mockEna, mockUsdc, mockUsde, mockWbtc, mockWeth } from "./addresses";
-import ena from "../../public/ena.png";
 import usde from "../../public/usde.png";
+import ena from "../../public/ena.png";
 
 export interface TokenOption {
   name: string;
