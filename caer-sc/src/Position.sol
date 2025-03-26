@@ -33,9 +33,22 @@ contract Position is ReentrancyGuard {
     mapping(address => uint256) public tokenBalances;
 
     ListingDetail public listingDetail;
-    
+
     event Liquidate(address user);
     event SwapToken(address user, address token, uint256 amount);
+    event CostSwapToken(address user, address token, uint256 amount);
+    event ListingTradingPosition(
+        address user,
+        address token,
+        uint256 price,
+        string name
+    );
+    event BuyTradingPosition(
+        address user,
+        address token,
+        uint256 price,
+        string name
+    );
 
     constructor(address _collateral, address _borrow) {
         collateralAssets = _collateral;
@@ -60,31 +73,53 @@ contract Position is ReentrancyGuard {
     function costSwapToken(address _token, uint256 _amount) public {
         if (tokenListsId[_token] == 0) revert TokenNotFound();
         tokenBalances[_token] -= _amount;
-        emit SwapToken(msg.sender, _token, _amount);
+        emit CostSwapToken(msg.sender, _token, _amount);
     }
 
-    function listingTradingPosition(address _token, uint256 _price, string memory _name) public {
-        if(listingDetail.isListing) revert TradingAccountListed();
+    function listingTradingPosition(
+        address _token,
+        uint256 _price,
+        string memory _name
+    ) public {
+        if (listingDetail.isListing) revert TradingAccountListed();
         listingDetail = ListingDetail(true, _price, _name, _token);
+        emit ListingTradingPosition(msg.sender, _token, _price, _name);
     }
 
-    function buyTradingPosition(uint256 _price, address _buyer) public nonReentrant {
-        if(_price != listingDetail.price) revert InvalidPrice();
-        if(!listingDetail.isListing) revert NotForSale();
-        IERC20(listingDetail.sellWithToken).safeTransferFrom(_buyer, owner, _price);
+    function buyTradingPosition(
+        uint256 _price,
+        address _buyer
+    ) public nonReentrant {
+        if (_price != listingDetail.price) revert InvalidPrice();
+        if (!listingDetail.isListing) revert NotForSale();
+        IERC20(listingDetail.sellWithToken).safeTransferFrom(
+            _buyer,
+            owner,
+            _price
+        );
         owner = _buyer;
         listingDetail = ListingDetail(false, 0, "", address(0));
+        emit BuyTradingPosition(
+            _buyer,
+            listingDetail.sellWithToken,
+            _price,
+            listingDetail.name
+        );
     }
 
     function getTokenOwnerLength() public view returns (uint256) {
         return counter;
     }
 
-    function getTokenOwnerAddress(uint256 _counter) public view returns (address) {
+    function getTokenOwnerAddress(
+        uint256 _counter
+    ) public view returns (address) {
         return tokenLists[_counter];
     }
 
-    function getTokenOwnerBalances(address _token) public view returns (uint256) {
+    function getTokenOwnerBalances(
+        address _token
+    ) public view returns (uint256) {
         return tokenBalances[_token];
     }
 
