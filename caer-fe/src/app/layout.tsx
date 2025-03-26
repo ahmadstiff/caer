@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen bg-[#0d0d21]`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen bg-[#000000]`}
       >
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
