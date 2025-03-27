@@ -54,7 +54,7 @@ contract LendingPool is ReentrancyGuard {
     event Withdraw(address user, uint256 amount, uint256 shares);
     event SupplyCollateralByPosition(address user, uint256 amount);
     event WithdrawCollateral(address user, uint256 amount);
-    event BorrowByPosition(address user, uint256 amount, uint256 shares);
+    event BorrowByPosition(address user, uint256 amount, uint256 shares, bool bridge);
     event RepayByPosition(address user, uint256 amount, uint256 shares);
     event RepayWithCollateralByPosition(address user, uint256 amount, uint256 shares);
     event Flashloan(address user, address token, uint256 amount);
@@ -144,15 +144,15 @@ contract LendingPool is ReentrancyGuard {
         IPosition(addressPositions[tempAddress][_positionIndex]).listingTradingPosition(_token, _price, _name);
     }
 
-    function buyTradingAccount(uint256 _positionIndex, uint256 _price, address _buyer) public {
-        address tempAddress = addressPositionOwners[_positionIndex];
-        IPosition(addressPositions[tempAddress][_positionIndex]).buyTradingPosition(_price, _buyer);
+    // function buyTradingAccount(uint256 _positionIndex, uint256 _price, address _buyer) public {
+    //     address tempAddress = addressPositionOwners[_positionIndex];
+    //     IPosition(addressPositions[tempAddress][_positionIndex]).buyTradingPosition(_price, _buyer);
 
-        addressPositions[msg.sender].push(addressPositions[tempAddress][_positionIndex]);
-        addressPositions[tempAddress][_positionIndex] = address(0);
-        addressPositionOwners[_positionIndex] = msg.sender;
-        addressArrayLocation[addressPositionDetails[_positionIndex]] = addressPositions[msg.sender].length - 1;
-    }
+    //     addressPositions[msg.sender].push(addressPositions[tempAddress][_positionIndex]);
+    //     addressPositions[tempAddress][_positionIndex] = address(0);
+    //     addressPositionOwners[_positionIndex] = msg.sender;
+    //     addressArrayLocation[addressPositionDetails[_positionIndex]] = addressPositions[msg.sender].length - 1;
+    // }
     /**
      * @dev Allows users to supply liquidity to the protocol.
      * The supplied tokens increase the total available assets,
@@ -317,7 +317,7 @@ contract LendingPool is ReentrancyGuard {
      *
      * @param amount The amount of tokens the user wants to borrow.
      */
-    function borrowByPosition(uint256 amount) public nonReentrant {
+    function borrowByPosition(uint256 amount, address _user) public nonReentrant {
         _accrueInterest();
         uint256 shares = 0;
         if (totalBorrowShares == 0) {
@@ -333,9 +333,11 @@ contract LendingPool is ReentrancyGuard {
         if (totalBorrowAssets > totalSupplyAssets) {
             revert InsufficientLiquidity();
         }
-        IERC20(borrowToken).safeTransfer(msg.sender, amount);
+        IERC20(borrowToken).safeTransfer(_user, amount);
 
-        emit BorrowByPosition(msg.sender, amount, shares);
+        bool bridge = _user != msg.sender;
+
+        emit BorrowByPosition(msg.sender, amount, shares, bridge);
     }
 
     /**
