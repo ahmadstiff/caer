@@ -15,7 +15,7 @@ import {
 
 export default function LendingHeader() {
   return (
-    <div className="mt-15 p-6  min-h-screen">
+    <div className="mt-15 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm hover:bg-slate-900/80 transition-all duration-200 overflow-hidden group">
