@@ -2,6 +2,7 @@ import { http } from "wagmi";
 import { createConfig } from "wagmi";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { defineChain } from "viem";
+import { arbitrumSepolia } from "viem/chains";
 
 const myCustomChain = defineChain({
   id: 11155931,
@@ -24,8 +25,9 @@ const myCustomChain = defineChain({
 export const config = getDefaultConfig({
   appName: "MyDApp",
   projectId: "YOUR_PROJECT_ID",
-  chains: [myCustomChain],
+  chains: [myCustomChain, arbitrumSepolia],
   transports: {
     [myCustomChain.id]: http(),
+    [arbitrumSepolia.id]: http(),
   },
 });

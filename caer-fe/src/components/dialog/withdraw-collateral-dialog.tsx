@@ -112,6 +112,8 @@ export const WithdrawDialog = () => {
   const wethBalance = useWethBalance();
   const collateralBalance = useCollateralBalance();
 
+  console.log(collateralBalance)
+
   const { writeContract, isPending } = useWriteContract();
 
   const handleWithdraw = async () => {
@@ -188,7 +190,7 @@ export const WithdrawDialog = () => {
           <Button
             onClick={handleWithdraw}
             disabled={
-              isPending || !wethAmount || Number.parseFloat(wethAmount) <= 0
+              isPending || !wethAmount || Number.parseFloat(wethAmount) <= 0 || collateralBalance == 0
             }
             className={`w-full h-12 text-base font-medium rounded-lg ${
               isPending
