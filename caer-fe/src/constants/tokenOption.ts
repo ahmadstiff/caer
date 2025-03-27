@@ -25,7 +25,7 @@ export const TOKEN_OPTIONS: TokenOption[] = [
   {
     name: "USDC",
     address: mockUsdc,
-    logo: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48/logo.png",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ43MuDqq54iD1ZCRL_uthAPkfwSSL-J5qI_Q&s",
     decimals: 6,
   },
   {

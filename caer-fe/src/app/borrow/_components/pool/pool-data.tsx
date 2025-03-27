@@ -9,6 +9,7 @@ import BorrowDialog from "@/components/dialog/borrow-dialog";
 import { RepayDialog } from "@/components/dialog/repay-dialog";
 import SupplyDialogCol from "@/components/dialog/suppy-collateral-dialog";
 import { WithdrawDialog } from "@/components/dialog/withdraw-collateral-dialog";
+import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 
 const PoolData = () => {
   const { address } = useAccount();
@@ -62,14 +63,14 @@ const PoolData = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
                 <Image
-                  src="/placeholder.svg"
+                  src={TOKEN_OPTIONS.find((token) => token.address === collateralAddress)?.logo ?? "/placeholder.svg"}
                   alt="Token logo"
                   width={36}
                   height={36}
                 />
               </div>
               <div>
-                <div className="font-semibold text-white">Collateral</div>
+                <div className="font-semibold text-white">WETH</div>
                 <div className="text-xs text-slate-400">Collateral Asset</div>
               </div>
             </div>
@@ -105,7 +106,7 @@ const PoolData = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
                 <Image
-                  src="/placeholder.svg"
+                  src={TOKEN_OPTIONS.find((token) => token.address === borrowAddress)?.logo ?? "/placeholder.svg"}
                   alt="USDC logo"
                   width={36}
                   height={36}
