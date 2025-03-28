@@ -12,6 +12,7 @@ import { ChevronDown, HelpCircle, Search } from "lucide-react";
 import Image from "next/image";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import DialogSupply from "./DialogSupply";
+import DialogWithdraw from "./DialogWithdraw";
 
 const LendingData = () => {
   return (
@@ -96,15 +97,13 @@ const LendingData = () => {
                     <td className="p-4 text-center flex justify-center">
                       <div className="flex items-center gap-2">
                         <div>
-                          {/* <Button className="bg-green-800 hover:bg-green-700 duration-300 cursor-pointer px-4 py-2 rounded-md transition-all">
-                            Supply
-                          </Button> */}
                           <DialogSupply />
                         </div>
                         <div>
-                          <Button className="bg-violet-800/80 hover:bg-violet-700/80 duration-300 cursor-pointer px-4 py-2 rounded-md transition-all">
+                          {/* <Button className="bg-violet-800/80 hover:bg-violet-700/80 duration-300 cursor-pointer px-4 py-2 rounded-md transition-all">
                             Withdraw
-                          </Button>
+                          </Button> */}
+                          <DialogWithdraw />
                         </div>
                       </div>
                     </td>

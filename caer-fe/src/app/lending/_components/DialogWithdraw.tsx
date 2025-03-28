@@ -11,10 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { mockUsdc } from "@/constants/addresses";
-import { useUsdcBalance } from "@/hooks/useTokenBalance";
-import { useSupply } from "@/hooks/write/useSupply";
-import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
+import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { CreditCard, DollarSign, Loader2 } from "lucide-react";
 import React, { useState } from "react";
@@ -22,26 +19,19 @@ import { useWriteContract } from "wagmi";
 
 const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as string;
 
-const DialogSupply = () => {
+const DialogWithdraw = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [hasPosition, setHasPosition] = useState<boolean | unknown>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const usdcBalance = useUsdcBalance();
+  const { userSupply } = useReadLendingData();
 
   const {
-    data: approveHash,
-    isPending: isApprovePending,
-    writeContract: approveTransaction,
-  } = useWriteContract();
-
-  const {
-    data: supplyHash,
-    isPending: isSupplyPending,
-    writeContract: supplyTransaction,
+    data: withdrawHash,
+    isPending: isWithdrawPending,
+    writeContract: withdrawTransaction,
   } = useWriteContract();
 
   const handleBorrow = async () => {
@@ -49,7 +39,7 @@ const DialogSupply = () => {
     setError(null);
 
     if (!amount || isNaN(Number(amount))) {
-      setError("Invalid supply amount");
+      setError("Invalid withdraw amount");
       setIsProcessing(false);
       return;
     }
@@ -57,26 +47,14 @@ const DialogSupply = () => {
     const supplyAmountBigInt = BigInt(Number(amount) * 10 ** 6);
 
     try {
-      console.log("⏳ Sending approval transaction...");
-
-      await approveTransaction({
-        abi: mockErc20Abi,
-        address: mockUsdc,
-        functionName: "approve",
-        args: [lendingPool, supplyAmountBigInt],
-      });
-
-      console.log("✅ Approval transaction sent, waiting for confirmation...");
-
-      console.log("✅ Approval confirmed, proceeding with supply...");
-      await supplyTransaction({
+      await withdrawTransaction({
         abi: poolAbi,
         address: `0x${lendingPool}`,
-        functionName: "supply",
+        functionName: "withdraw",
         args: [supplyAmountBigInt],
       });
 
-      console.log("🚀 Supply transaction sent!");
+      console.log("🚀 Withdraw transaction sent!");
     } catch (err) {
       console.error("❌ Transaction failed:", err);
       setError("Transaction failed. Please try again.");
@@ -92,7 +70,7 @@ const DialogSupply = () => {
             className="bg-gradient-to-r from-indigo-400 to-blue-600  hover:from-indigo-500 hover:to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-colors duration-300 rounded-lg cursor-pointer"
             size="default"
           >
-            Supply
+            Withdraw
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md bg-gradient-to-b from-white to-slate-50 border-0 shadow-xl rounded-xl">
@@ -100,7 +78,7 @@ const DialogSupply = () => {
             <div className="flex items-center gap-2">
               <CreditCard className="h-6 w-6 text-blue-500" />
               <DialogTitle className="text-xl font-bold text-slate-800">
-                Supply USDC
+                Withdraw USDC
               </DialogTitle>
             </div>
           </DialogHeader>
@@ -110,13 +88,13 @@ const DialogSupply = () => {
               <CardContent className="px-4">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-sm font-medium text-slate-700">
-                    Supply Amount
+                    Withdraw Amount
                   </h3>
                 </div>
 
                 <div className="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
                   <Input
-                    placeholder={`Enter amount of USDC to supply`}
+                    placeholder={`Enter amount of USDC to withdraw`}
                     value={amount}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -137,9 +115,9 @@ const DialogSupply = () => {
                 <div className="flex justify-between items-center text-xs mt-2">
                   <span className="text-gray-400">Your balance : </span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className=" text-gray-600">{usdcBalance}</span>
+                    <span className=" text-gray-600">{String(userSupply)}</span>
                     <button
-                      onClick={() => setAmount(usdcBalance)}
+                      onClick={() => setAmount(String(userSupply))}
                       className="text-xs px-2 p-0.5 border border-blue-500 rounded-md text-blue-500 hover:bg-blue-200 cursor-pointer duration-300 transition-colors"
                     >
                       Max
@@ -167,7 +145,7 @@ const DialogSupply = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  <span>{`Supply USDC`}</span>
+                  <span>{`Withdraw USDC`}</span>
                 </div>
               )}
             </Button>
@@ -178,4 +156,4 @@ const DialogSupply = () => {
   );
 };
 
-export default DialogSupply;
+export default DialogWithdraw;
