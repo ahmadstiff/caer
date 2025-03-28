@@ -7,6 +7,6 @@ libs = ["lib"]
 op_sepolia = "https://sepolia.optimism.io"
 rise_sepolia = "https://testnet.riselabs.xyz"
 arb_sepolia = "https://arbitrum-sepolia.drpc.org"
-cachain_sepolia = "http://127.0.0.1:8547/"
+cachain_sepolia = "http://44.213.128.45:8547/"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
