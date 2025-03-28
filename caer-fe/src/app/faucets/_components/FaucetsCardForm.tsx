@@ -90,6 +90,24 @@ const FaucetsCardForm = () => {
         >
           {isClaiming ? "Claiming..." : "Claim"}
         </Button>
+        {/* add token address to your wallet*/}
+
+        {/* selectedt token copy shortcut */}
+        {selectedToken ? (
+          <p className="text-slate-100 text-sm mt-5">
+            Add token address to your wallet:{" "}
+            <button
+              className="text-blue-400 cursor-pointer hover:underline"
+              onClick={() => {
+                navigator.clipboard.writeText(selectedToken);
+                toast.success("Token address copied to clipboard");
+              }}
+              title="Click to copy"
+            >
+              {selectedToken}
+            </button>
+          </p>
+        ) : null}
       </div>
     </div>
   );
