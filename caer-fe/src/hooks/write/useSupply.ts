@@ -42,7 +42,6 @@ export const useSupply = () => {
 
     try {
       console.log("⏳ Sending approval transaction...");
-
       await approveTransaction({
         abi: mockErc20Abi,
         address: mockUsdc,
@@ -50,13 +49,10 @@ export const useSupply = () => {
         args: [lendingPool, supplyAmountBigInt],
       });
 
-      console.log("✅ Approval transaction sent, waiting for confirmation...");
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      console.log("✅ Approval confirmed, proceeding with supply...");
+      console.log("✅ Approval transaction sent!");
       await supplyTransaction({
         abi: poolAbi,
-        address: `0x${lendingPool}`,
+        address: lendingPool,
         functionName: "supply",
         args: [supplyAmountBigInt],
       });

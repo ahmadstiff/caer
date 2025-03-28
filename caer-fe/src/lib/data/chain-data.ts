@@ -1,19 +1,23 @@
 import { defineChain } from "viem";
-import  caer  from "../../../public/caer.png";
+import caer from "../../../public/caer.png";
 
-const myCustomChain = defineChain({
-  id: 6285153,
+export const caChain = defineChain({
+  id: 62851553,
   name: "Ca Chain",
   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: {
     default: { http: ["http://44.213.128.45:8547/"] },
   },
-  blockExplorers: {
-    default: {
-      name: "Riselabs",
-      url: "https://testnet-explorer.riselabs.xyz/",
-      apiUrl: "https://testnet-explorer.riselabs.xyz/api",
-    },
+  testnet: true,
+  iconBackground: "#fff",
+  iconUrl: caer.src,
+});
+export const arbitrumSepolia = defineChain({
+  id: 421614,
+  name: "Arbitrum Sepolia",
+  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: { http: ["https://sepolia-rollup.arbitrum.io/rpc"] },
   },
   testnet: true,
   logoURL: caer.src,

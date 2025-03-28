@@ -6,9 +6,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 import { CardContent, Card } from "@/components/ui/card";
-import { ChevronDown, HelpCircle, Search } from "lucide-react";
 import Image from "next/image";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import DialogSupply from "./DialogSupply";
@@ -18,14 +16,14 @@ const LendingData = () => {
   return (
     <div className="min-h-screen text-white">
       {/* Main Content */}
-      <main className="p-6 max-w-7xl mx-auto">
+      <main className="max-w-7xl mx-auto">
         {/* Table */}
-        <Card className="bg-gray-900 border-gray-800 rounded-lg overflow-hidden">
+        <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm rounded-lg overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-800">
+                  <tr className="border-b border-gray-900">
                     <th className="text-center p-4 text-sm font-medium text-gray-400">
                       Supply Liquidity
                     </th>
@@ -112,7 +110,7 @@ const LendingData = () => {
               </table>
             </div>
           </CardContent>
-        </Card>
+        </div>
       </main>
     </div>
   );

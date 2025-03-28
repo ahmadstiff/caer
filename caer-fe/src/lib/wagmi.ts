@@ -1,33 +1,15 @@
 import { http } from "wagmi";
-import { createConfig } from "wagmi";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { defineChain } from "viem";
 import { arbitrumSepolia } from "viem/chains";
+import { caChain } from "./data/chain-data";
 
-const myCustomChain = defineChain({
-  id: 11155931,
-  name: "Rise Sepolia",
-  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
-  rpcUrls: {
-    default: { http: ["https://testnet.riselabs.xyz"] },
-  },
-  blockExplorers: {
-    default: {
-      name: "Riselabs",
-      url: "https://testnet-explorer.riselabs.xyz/",
-      apiUrl: "https://testnet-explorer.riselabs.xyz/api",
-    },
-  },
-  testnet: true,
-  // iconUrl:LogoEth,
-});
 
 export const config = getDefaultConfig({
   appName: "MyDApp",
   projectId: "YOUR_PROJECT_ID",
-  chains: [myCustomChain, arbitrumSepolia],
+  chains: [caChain, arbitrumSepolia],
   transports: {
-    [myCustomChain.id]: http(),
+    [caChain.id]: http(),
     [arbitrumSepolia.id]: http(),
   },
 });

@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 
 const AmountInput = ({ value, onChange, token, label }: any) => {
-  const { userSupply } = useReadLendingData();
+  const { userBorrow } = useReadLendingData();
   return (
     <Card className="border border-slate-200 bg-white shadow-sm">
       <CardContent className="p-4">
@@ -52,11 +52,11 @@ const AmountInput = ({ value, onChange, token, label }: any) => {
         <div className="mt-3 text-xs text-slate-500 flex items-center justify-between">
           <span className="text-sm text-blue-700">Debt :</span>
           <div className="flex items-center text-xs gap-2">
-            <span>{userSupply ? Number(userSupply) / 1e6 : "0.00"} $USDC</span>
+            <span>{userBorrow ? Number(userBorrow) / 1e6 : "0.00"} $USDC</span>
             <button
               className="text-xs p-0.5 text-blue-500 rounded-md border border-blue-500 hover:bg-blue-300"
               onClick={() =>
-                onChange(userSupply ? Number(userSupply) / 1e6 : "0.00")
+                onChange(userBorrow ? Number(userBorrow) / 1e6 : "0.00")
               }
             >
               Max
@@ -69,7 +69,7 @@ const AmountInput = ({ value, onChange, token, label }: any) => {
 };
 
 export const RepayDialog = () => {
-  const { totalBorrowAssets, totalBorrowShares, userSupply } =
+  const { totalBorrowAssets, totalBorrowShares, userSupply, userBorrow } =
     useReadLendingData();
   const [usdcAmount, setUsdcAmount] = useState("0");
   const [isOpen, setIsOpen] = useState(false);
@@ -83,13 +83,16 @@ export const RepayDialog = () => {
 
     setIsOpen(true);
     const amount = Number(usdcAmount) * 1e6;
+    const result = Math.round(
+      (amount * Number(totalBorrowAssets)) / Number(totalBorrowShares) + amount
+    );
 
     try {
       await writeContract({
         address: mockUsdc,
         abi: mockErc20Abi,
         functionName: "approve",
-        args: [lendingPool, BigInt(amount)],
+        args: [lendingPool, BigInt(result)],
       });
 
       await writeContract({
@@ -110,13 +113,13 @@ export const RepayDialog = () => {
     if (
       !totalBorrowAssets ||
       !totalBorrowShares ||
-      !userSupply ||
+      !userBorrow ||
       Number(totalBorrowShares) === 0
     ) {
       return 0;
     }
     return (
-      (Number(userSupply) * Number(totalBorrowAssets)) /
+      (Number(userBorrow) * Number(totalBorrowAssets)) /
       Number(totalBorrowShares)
     );
   };
@@ -158,7 +161,7 @@ export const RepayDialog = () => {
                   Repayment Information
                 </h4>
                 <p className="text-xs text-blue-600">
-                  Debt: {userSupply ? Number(userSupply) / 1e6 : "0.00"} Shares
+                  Debt: {userBorrow ? Number(userBorrow) / 1e6 : "0.00"} Shares
                 </p>
                 <p className="text-xs text-blue-600 mt-3">
                   Equals to {debtEquals().toFixed(4)} USDC

@@ -5,6 +5,7 @@ import {
   useWriteContract,
   useWaitForTransactionReceipt,
   useReadContract,
+  useAccount,
 } from "wagmi";
 import { parseUnits } from "viem";
 import {
@@ -32,28 +33,11 @@ interface BorrowDialogProps {
 }
 
 export default function BorrowDialog({ token }: BorrowDialogProps) {
+  const { address } = useAccount();
   const [amount, setAmount] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [hasPosition, setHasPosition] = useState<boolean | unknown>(false);
   const usdcBalance = useUsdcBalance();
-
-  const { data: positionAddress, refetch: refetchPosition } = useReadContract({
-    address: lendingPool,
-    abi: poolAbi,
-    functionName: "addressPosition",
-    args: [
-      typeof window !== "undefined"
-        ? (window as any).ethereum?.selectedAddress
-        : undefined,
-    ],
-  });
-
-  useEffect(() => {
-    setHasPosition(
-      positionAddress &&
-        positionAddress !== "0x0000000000000000000000000000000000000000"
-    );
-  }, [positionAddress]);
 
   const {
     data: approveHash,
@@ -95,28 +79,11 @@ export default function BorrowDialog({ token }: BorrowDialogProps) {
       const decimal = 6;
       const parsedAmount = parseUnits(amount, decimal);
 
-      if (!hasPosition) {
-        await createPositionTransaction({
-          address: lendingPool,
-          abi: poolAbi,
-          functionName: "createPosition",
-          args: [],
-        });
-        await refetchPosition();
-      }
-
-      await approveTransaction({
-        address: mockUsdc,
-        abi: mockErc20Abi,
-        functionName: "approve",
-        args: [lendingPool, parsedAmount],
-      });
-
       await borrowTransaction({
         address: lendingPool,
         abi: poolAbi,
         functionName: "borrowByPosition",
-        args: [parsedAmount],
+        args: [parsedAmount, address],
       });
 
       setAmount("");

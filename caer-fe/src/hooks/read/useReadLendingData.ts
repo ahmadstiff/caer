@@ -26,7 +26,6 @@ export const useReadLendingData = (
     address: lendingPool,
     abi: poolAbi,
     functionName: "collateralToken",
-    args: [],
   });
 
   const { data: totalSupplyAssets } = useReadContract({
@@ -65,7 +64,7 @@ export const useReadLendingData = (
     address: lendingPool,
     abi: poolAbi,
     functionName: "userCollaterals",
-    args: [userAddress],
+    args: [address],
   });
 
   const { data: userSupply } = useReadContract({
@@ -82,6 +81,12 @@ export const useReadLendingData = (
     functionName: "totalSupplyAssets",
     args: [],
   });
+  const { data: userBorrow } = useReadContract({
+    address: lendingPool,
+    abi: poolAbi,
+    functionName: "userBorrowShares",
+    args: [address],
+  });
   return {
     checkAvailability,
     totalSupplyAssets,
@@ -92,6 +97,7 @@ export const useReadLendingData = (
     tokenBalanceByPosition,
     totalBorrowAssets,
     totalBorrowShares,
-    userSupply 
+    userSupply,
+    userBorrow,
   };
 };

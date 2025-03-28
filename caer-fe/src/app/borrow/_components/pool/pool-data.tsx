@@ -63,7 +63,11 @@ const PoolData = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
                 <Image
-                  src={TOKEN_OPTIONS.find((token) => token.address === collateralAddress)?.logo ?? "/placeholder.svg"}
+                  src={
+                    TOKEN_OPTIONS.find(
+                      (token) => token.address === collateralAddress
+                    )?.logo ?? "/placeholder.svg"
+                  }
                   alt="Token logo"
                   width={36}
                   height={36}
@@ -76,17 +80,16 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {/* {formatValue(userCollateral)} */}
+                {formatValue((userCollateral))}
               </div>
               <div className="text-xs text-slate-400">
-                {/* ≈ {formatUSD(userCollateral)} */}
+                ≈ {formatUSD((userCollateral))}
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <SupplyDialogCol token="WETH" />
-            <WithdrawDialog />
+            <div className="flex gap-2 ">
+              <SupplyDialogCol token="WETH" />
+              <WithdrawDialog />
+            </div>
           </div>
         </div>
       </div>
@@ -106,7 +109,11 @@ const PoolData = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
                 <Image
-                  src={TOKEN_OPTIONS.find((token) => token.address === borrowAddress)?.logo ?? "/placeholder.svg"}
+                  src={
+                    TOKEN_OPTIONS.find(
+                      (token) => token.address === borrowAddress
+                    )?.logo ?? "/placeholder.svg"
+                  }
                   alt="USDC logo"
                   width={36}
                   height={36}
@@ -119,17 +126,16 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {/* {formatValue(tokenBalanceByPosition, 6)} */}
+                {formatValue(Number(tokenBalanceByPosition), 6)}
               </div>
               <div className="text-xs text-slate-400">
-                {/* ≈ {formatUSD(tokenBalanceByPosition, 6)} */}
+                ≈ {formatUSD(Number(tokenBalanceByPosition), 6)}
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <BorrowDialog token={"USDC"} />
-            <RepayDialog />
+            <div className="flex gap-2">
+              <BorrowDialog token={"USDC"} />
+              <RepayDialog />
+            </div>
           </div>
         </div>
       </div>

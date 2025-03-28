@@ -11,83 +11,40 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { lendingPool, mockUsdc } from "@/constants/addresses";
 import { useUsdcBalance } from "@/hooks/useTokenBalance";
 import { useSupply } from "@/hooks/write/useSupply";
-import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
-import { poolAbi } from "@/lib/abi/poolAbi";
 import { CreditCard, DollarSign, Loader2 } from "lucide-react";
 import React, { useState } from "react";
-import { useWriteContract } from "wagmi";
 
 const DialogSupply = () => {
+  const {
+    supply,
+    isApprovePending,
+    isSupplyPending,
+    isApproveLoading,
+    isSupplyLoading,
+    isProcessing,
+    error,
+  } = useSupply();
+
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const [hasPosition, setHasPosition] = useState<boolean | unknown>(false);
-  const [error, setError] = useState<string | null>(null);
 
   const usdcBalance = useUsdcBalance();
+  const isTransactionPending =
+    isApprovePending ||
+    isSupplyPending ||
+    isApproveLoading ||
+    isSupplyLoading ||
+    isProcessing;
+  const isButtonDisabled = isTransactionPending || !amount;
 
-  const {
-    data: approveHash,
-    isPending: isApprovePending,
-    writeContract: approveTransaction,
-  } = useWriteContract();
-
-  const {
-    data: supplyHash,
-    isPending: isSupplyPending,
-    writeContract: supplyTransaction,
-  } = useWriteContract();
-
-  const handleBorrow = async () => {
-    setIsProcessing(true);
-    setError(null);
-
-    if (!amount || isNaN(Number(amount))) {
-      setError("Invalid supply amount");
-      setIsProcessing(false);
-      return;
-    }
-
-    const supplyAmountBigInt = BigInt(Number(amount) * 10 ** 6);
-
-    try {
-      console.log("⏳ Sending approval transaction...");
-
-      await approveTransaction({
-        abi: mockErc20Abi,
-        address: mockUsdc,
-        functionName: "approve",
-        args: [lendingPool, supplyAmountBigInt],
-      });
-
-      console.log("✅ Approval transaction sent, waiting for confirmation...");
-
-      console.log("✅ Approval confirmed, proceeding with supply...");
-      await supplyTransaction({
-        abi: poolAbi,
-        address: `0x${lendingPool}`,
-        functionName: "supply",
-        args: [supplyAmountBigInt],
-      });
-
-      console.log("🚀 Supply transaction sent!");
-    } catch (err) {
-      console.error("❌ Transaction failed:", err);
-      setError("Transaction failed. Please try again.");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
-            className="bg-gradient-to-r from-indigo-400 to-blue-600  hover:from-indigo-500 hover:to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-colors duration-300 rounded-lg cursor-pointer"
+            className="bg-gradient-to-r from-indigo-400 to-blue-600 hover:from-indigo-500 hover:to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-colors duration-300 rounded-lg cursor-pointer"
             size="default"
           >
             Supply
@@ -114,7 +71,7 @@ const DialogSupply = () => {
 
                 <div className="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
                   <Input
-                    placeholder={`Enter amount of USDC to supply`}
+                    placeholder="Enter amount of USDC to supply"
                     value={amount}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -122,8 +79,7 @@ const DialogSupply = () => {
                         setAmount(value);
                       }
                     }}
-                    disabled={isProcessing}
-                    min="0"
+                    disabled={isTransactionPending}
                     className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-lg font-medium"
                   />
                   <div className="flex items-center gap-1 bg-slate-200 px-3 py-1 rounded-md">
@@ -133,9 +89,9 @@ const DialogSupply = () => {
                 </div>
 
                 <div className="flex justify-between items-center text-xs mt-2">
-                  <span className="text-gray-400">Your balance : </span>
+                  <span className="text-gray-400">Your balance :</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className=" text-gray-600">{usdcBalance}</span>
+                    <span className="text-gray-600">{usdcBalance}</span>
                     <button
                       onClick={() => setAmount(usdcBalance)}
                       className="text-xs px-2 p-0.5 border border-blue-500 rounded-md text-blue-500 hover:bg-blue-200 cursor-pointer duration-300 transition-colors"
@@ -150,23 +106,21 @@ const DialogSupply = () => {
 
           <DialogFooter>
             <Button
-              onClick={handleBorrow}
-              disabled={isProcessing || !amount}
+              onClick={() => supply(amount)}
+              disabled={isButtonDisabled}
               className={`w-full h-12 text-base font-medium rounded-lg ${
-                isProcessing
-                  ? "bg-slate-200 text-slate-500"
+                isButtonDisabled
+                  ? "bg-slate-200 text-slate-500 cursor-not-allowed"
                   : "bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-blue-600 hover:to-indigo-500 text-white shadow-md hover:shadow-lg"
               }`}
             >
-              {isProcessing ? (
+              {isTransactionPending ? (
                 <div className="flex items-center justify-center">
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   <span>Processing Transaction...</span>
                 </div>
               ) : (
-                <div className="flex items-center justify-center">
-                  <span>{`Supply USDC`}</span>
-                </div>
+                <span>Supply USDC</span>
               )}
             </Button>
           </DialogFooter>
