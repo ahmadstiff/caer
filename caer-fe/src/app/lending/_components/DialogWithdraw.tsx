@@ -11,13 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { lendingPool } from "@/constants/addresses";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { CreditCard, DollarSign, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useWriteContract } from "wagmi";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as string;
 
 const DialogWithdraw = () => {
   const [isOpen, setIsOpen] = useState(false);

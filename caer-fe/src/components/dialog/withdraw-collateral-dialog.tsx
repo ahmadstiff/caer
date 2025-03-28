@@ -15,15 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { mockWeth } from "@/constants/addresses";
+import { lendingPool, mockWeth } from "@/constants/addresses";
 import { ArrowUpRight, Loader2, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 import { Address } from "viem";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 const useWethBalance = () => {
   const { address } = useAccount();

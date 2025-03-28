@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { mockUsdc } from "@/constants/addresses";
+import { lendingPool, mockUsdc } from "@/constants/addresses";
 import { useUsdcBalance } from "@/hooks/useTokenBalance";
 import { useSupply } from "@/hooks/write/useSupply";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
@@ -19,8 +19,6 @@ import { poolAbi } from "@/lib/abi/poolAbi";
 import { CreditCard, DollarSign, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useWriteContract } from "wagmi";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as string;
 
 const DialogSupply = () => {
   const [isOpen, setIsOpen] = useState(false);

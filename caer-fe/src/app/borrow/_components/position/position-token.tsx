@@ -7,6 +7,7 @@ import { useAccount, useReadContract } from "wagmi";
 import { RepaySelectedToken } from "./repay-selected-token";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import { ArrowRightLeft } from "lucide-react";
+import { lendingPool } from "@/constants/addresses";
 
 interface PositionTokenProps {
   name: string | undefined;
@@ -14,8 +15,6 @@ interface PositionTokenProps {
   decimal: number;
   addressPosition: Address | undefined;
 }
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 const PositionToken = ({
   name,

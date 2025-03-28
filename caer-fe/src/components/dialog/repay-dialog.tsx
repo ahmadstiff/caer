@@ -15,13 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { mockUsdc } from "@/constants/addresses";
+import { lendingPool, mockUsdc } from "@/constants/addresses";
 import { ArrowDown, CreditCard, DollarSign, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 const AmountInput = ({ value, onChange, token, label }: any) => {
   const { userSupply } = useReadLendingData();

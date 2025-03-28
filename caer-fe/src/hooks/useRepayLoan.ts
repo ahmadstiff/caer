@@ -2,14 +2,10 @@ import { useState, useMemo } from "react";
 import { useWriteContract, useReadContract, useAccount } from "wagmi";
 import { useBorrowBalance } from "./useBorrowBalance";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { mockUsdc } from "@/constants/addresses";
+import { lendingPool, mockUsdc, priceFeed } from "@/constants/addresses";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
 import { priceAbi } from "@/lib/abi/price-abi";
 import { useReadLendingData } from "./read/useReadLendingData";
-
-const lendingPool = process.env
-  .NEXT_PUBLIC_LENDING_POOL_ADDRESS as `0x${string}`;
-const priceFeed = process.env.NEXT_PUBLIC_PRICE_FEED_ADDRESS as `0x${string}`;
 
 interface UseRepayLoanProps {
   tokenAddress: `0x${string}`;

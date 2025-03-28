@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { mockUsdc } from "@/constants/addresses";
+import { lendingPool, mockUsdc } from "@/constants/addresses";
 import { CreditCard, DollarSign, Loader2 } from "lucide-react";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,8 +30,6 @@ import { Address } from "viem";
 interface BorrowDialogProps {
   token: string;
 }
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 export default function BorrowDialog({ token }: BorrowDialogProps) {
   const [amount, setAmount] = useState("");

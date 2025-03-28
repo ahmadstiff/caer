@@ -1,8 +1,7 @@
 import { useAccount, useReadContract } from "wagmi";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { Address } from "viem";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
+import { lendingPool } from "@/constants/addresses";
 
 export const useReadLendingData = (
   userAddress?: Address,

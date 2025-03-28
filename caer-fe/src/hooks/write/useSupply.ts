@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
-import { mockUsdc } from "@/constants/addresses";
-
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as string;
+import { lendingPool, mockUsdc } from "@/constants/addresses";
 
 export const useSupply = () => {
   const [isProcessing, setIsProcessing] = useState(false);

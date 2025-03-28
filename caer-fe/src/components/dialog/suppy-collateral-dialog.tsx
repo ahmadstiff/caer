@@ -19,14 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
-import { mockWeth } from "@/constants/addresses";
+import { lendingPool, mockWeth } from "@/constants/addresses";
 import { Loader2, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useWethBalance } from "@/hooks/useTokenBalance";
 import { Address } from "viem";
 
-const lendingPool = process.env.NEXT_PUBLIC_LENDING_POOL_ADDRESS as Address;
 
 interface SupplyDialogProps {
   token: string | undefined;
