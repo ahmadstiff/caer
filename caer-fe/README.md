@@ -1,22 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Technology Stack
+
+- **Frontend**:
+  - Next.js 15 (React Framework)
+  - TypeScript
+  - TailwindCSS for styling
+  - Framer Motion for animations
+- **Web3 Integration**:
+  - RainbowKit for wallet connection
+  - Wagmi for Ethereum interactions
+  - Support for multiple networks
+- **Development Tools**:
+  - pnpm as package manager
+  - ESLint for code quality
+  - Prettier for code formatting
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v18 or higher)
+- pnpm package manager
+- A Web3 wallet (e.g., MetaMask)
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/caer.git
+cd caer
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
+
+5. Start the development server:
+
+```bash
+pnpm dev
+```
+
+6. Open [http://localhost:3000](http://localhost:3000) to view the application
+
+## Project Structure
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
