@@ -11,8 +11,32 @@ import Image from "next/image";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import DialogSupply from "./DialogSupply";
 import DialogWithdraw from "./DialogWithdraw";
+import { useReadLendingData } from "@/hooks/read/useReadLendingData";
+import { usePriceBorrow } from "@/hooks/read/readPrice";
+import { mockUsdc } from "@/constants/addresses";
 
 const LendingData = () => {
+  const { totalSupplyAssets } = useReadLendingData();
+  const realTotalSupplyAssets = Number(
+    (Number(totalSupplyAssets) / 1e6).toFixed(2)
+  );
+
+  const price = usePriceBorrow(mockUsdc);
+  const realPrice = Number(
+    (realTotalSupplyAssets * (Number(price) / 1e6)).toFixed(2)
+  );
+
+  const formatPrice = (price: number) => {
+    const formatted = new Intl.NumberFormat("en-US", {
+      notation: "compact",
+      compactDisplay: "short",
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    }).format(price);
+    return formatted;
+  };
   return (
     <div className="min-h-screen text-white">
       {/* Main Content */}
@@ -66,8 +90,12 @@ const LendingData = () => {
                     </td>
                     <td className="p-4 text-gray-100">
                       <div>
-                        <div className="font-medium">212,000,000 $USDC</div>
-                        <div className="text-sm text-gray-500">$211.92M</div>
+                        <div className="font-medium">
+                          <p>{formatPrice(realTotalSupplyAssets)}</p>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          <p>{formatPrice(realPrice)}</p>
+                        </div>
                       </div>
                     </td>
 
@@ -98,9 +126,6 @@ const LendingData = () => {
                           <DialogSupply />
                         </div>
                         <div>
-                          {/* <Button className="bg-violet-800/80 hover:bg-violet-700/80 duration-300 cursor-pointer px-4 py-2 rounded-md transition-all">
-                            Withdraw
-                          </Button> */}
                           <DialogWithdraw />
                         </div>
                       </div>
