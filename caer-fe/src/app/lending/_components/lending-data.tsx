@@ -1,12 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
-import { CardContent, Card } from "@/components/ui/card";
+import React from "react";
+import { CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import DialogSupply from "./DialogSupply";
@@ -39,9 +33,7 @@ const LendingData = () => {
   };
   return (
     <div className="min-h-screen text-white">
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto">
-        {/* Table */}
         <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm rounded-lg overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -91,7 +83,7 @@ const LendingData = () => {
                     <td className="p-4 text-gray-100">
                       <div>
                         <div className="font-medium">
-                          <p>{formatPrice(realTotalSupplyAssets)}</p>
+                          <p>{realTotalSupplyAssets.toLocaleString("en-US")} $USDC</p>
                         </div>
                         <div className="text-sm text-gray-500">
                           <p>{formatPrice(realPrice)}</p>

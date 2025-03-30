@@ -48,8 +48,8 @@ const DialogWithdraw = () => {
     try {
       withdrawTransaction({
         abi: poolAbi,
-        address: `0x${lendingPool}`,
-        functionName: "withdraw",
+        address: lendingPool,
+        functionName: "withdraw", 
         args: [supplyAmountBigInt],
       });
 
@@ -119,7 +119,7 @@ const DialogWithdraw = () => {
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-gray-600">{String(Number(userSupply) / 1e6)}</span>
                     <button
-                      onClick={() => setAmount(String(Number(userSupply)))}
+                      onClick={() => setAmount(String(Number(userSupply) / 1e6))}
                       className="text-xs px-2 p-0.5 border border-blue-500 rounded-md text-blue-500 hover:bg-blue-200 cursor-pointer duration-300 transition-colors"
                     >
                       Max
