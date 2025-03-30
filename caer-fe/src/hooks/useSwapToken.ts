@@ -17,6 +17,7 @@ interface SwapTokenParams {
   toToken: {
     address: string;
     name: string;
+    decimals: number;
   };
   fromAmount: string;
   toAmount: string;
@@ -56,19 +57,19 @@ export const useSwapToken = () => {
       const amountIn = parseUnits(fromAmount, fromToken.decimals);
 
       // First approve the token spending
-      await writeContract({
-        address: fromToken.address as Address,
-        abi: erc20Abi,
-        functionName: "approve",
-        args: [lendingPool, amountIn],
-      });
+      // await writeContract({
+      //   address: fromToken.address as Address,
+      //   abi: erc20Abi,
+      //   functionName: "approve",
+      //   args: [lendingPool, BigInt(amountIn) + BigInt(1000)],
+      // });
 
       // Then perform the swap
       await writeContract({
         address: lendingPool,
         abi: poolAbi,
         functionName: "swapTokenByPosition",
-        args: [toToken.address, fromToken.address, amountIn, 0], // Position index 0
+        args: [toToken.address, fromToken.address, BigInt(amountIn), BigInt(1)], // Position index 0
       });
 
       toast.success(

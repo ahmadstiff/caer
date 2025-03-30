@@ -4,6 +4,7 @@ import { useReadContract } from "wagmi";
 import { Address } from "viem";
 import { priceAbi } from "@/lib/abi/price-abi";
 import { priceFeed } from "@/constants/addresses";
+import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 
 export const useTokenPrice = (
   fromTokenAddress: Address,
@@ -21,7 +22,11 @@ export const useTokenPrice = (
   });
 
   // Convert price from contract format (usually with 6 decimals precision)
-  const formattedPrice = price ? Number(price) / 10 ** 6 : 0;
+  const formattedPrice = price
+    ? Number(price) / 10 **
+      (TOKEN_OPTIONS.find((token) => token.address === fromTokenAddress)
+        ?.decimals ?? 18)
+    : 0;
 
   return {
     price: formattedPrice,
