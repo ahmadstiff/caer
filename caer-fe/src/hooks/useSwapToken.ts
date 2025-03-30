@@ -57,12 +57,12 @@ export const useSwapToken = () => {
       const amountIn = parseUnits(fromAmount, fromToken.decimals);
 
       // First approve the token spending
-      // await writeContract({
-      //   address: fromToken.address as Address,
-      //   abi: erc20Abi,
-      //   functionName: "approve",
-      //   args: [lendingPool, BigInt(amountIn) + BigInt(1000)],
-      // });
+      await writeContract({
+        address: fromToken.address as Address,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [lendingPool, BigInt(amountIn) + BigInt(1000)],
+      });
 
       // Then perform the swap
       await writeContract({
