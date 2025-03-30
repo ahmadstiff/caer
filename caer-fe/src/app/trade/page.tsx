@@ -10,7 +10,7 @@ export default function TradePage() {
     const tabs = ['Swap', 'Limit', 'Send'];
 
     return (
-        <div className="container mx-auto p-4 max-w-xl">
+        <div className="container mt-20 mx-auto p-4 max-w-xl">
             <div className="bg-gray-800 rounded-2xl p-4 shadow-lg">
                 <Tab.Group>
                     <Tab.List className="flex space-x-1 rounded-xl bg-gray-700 p-1 mb-4">
