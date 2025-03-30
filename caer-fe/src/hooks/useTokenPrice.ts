@@ -23,9 +23,10 @@ export const useTokenPrice = (
 
   // Convert price from contract format (usually with 6 decimals precision)
   const formattedPrice = price
-    ? Number(price) / 10 **
-      (TOKEN_OPTIONS.find((token) => token.address === fromTokenAddress)
-        ?.decimals ?? 18)
+    ? Number(price) /
+      10 **
+        (TOKEN_OPTIONS.find((token) => token.address === toTokenAddress)
+          ?.decimals ?? 18)
     : 0;
 
   return {
