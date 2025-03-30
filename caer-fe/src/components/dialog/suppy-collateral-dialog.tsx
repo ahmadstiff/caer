@@ -24,8 +24,6 @@ import { Loader2, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useWethBalance } from "@/hooks/useTokenBalance";
-import { Address } from "viem";
-
 
 interface SupplyDialogProps {
   token: string | undefined;
@@ -37,28 +35,6 @@ export default function SupplyDialogCol({ token }: SupplyDialogProps) {
   const [hasPosition, setHasPosition] = useState(false);
 
   const wethBalance = useWethBalance();
-
-  const { data: positionAddress, refetch: refetchPosition } = useReadContract({
-    address: lendingPool,
-    abi: poolAbi,
-    functionName: "addressPosition",
-    args: [
-      typeof window !== "undefined"
-        ? (window as any).ethereum?.selectedAddress
-        : undefined,
-    ],
-  });
-
-  useEffect(() => {
-    if (
-      positionAddress &&
-      positionAddress !== "0x0000000000000000000000000000000000000000"
-    ) {
-      setHasPosition(true);
-    } else {
-      setHasPosition(false);
-    }
-  }, [positionAddress]);
 
   const {
     data: approveHash,
@@ -99,16 +75,6 @@ export default function SupplyDialogCol({ token }: SupplyDialogProps) {
       }
 
       const parsedAmount = parseUnits(amount.toString(), 18);
-
-      if (!hasPosition) {
-        await createPositionTransaction({
-          address: lendingPool,
-          abi: poolAbi,
-          functionName: "createPosition",
-          args: [],
-        });
-        await refetchPosition();
-      }
 
       await approveTransaction({
         abi: mockErc20Abi,

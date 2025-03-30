@@ -1,11 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
-import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
-import BorrowDialog from "@/components/dialog/borrow-dialog";
+import BorrowDialog from "@/components/dialog/borrow/borrow-dialog";
 import { RepayDialog } from "@/components/dialog/repay-dialog";
 import SupplyDialogCol from "@/components/dialog/suppy-collateral-dialog";
 import { WithdrawDialog } from "@/components/dialog/withdraw-collateral-dialog";

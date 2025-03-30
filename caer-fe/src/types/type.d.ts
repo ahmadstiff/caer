@@ -20,5 +20,11 @@ interface PositionTokenProps {
   decimal: number;
   addressPosition: Address | undefined;
 }
+export interface Chain {
+  id: number;
+  name: string;
+  type: string;
+  logoUrl: string;
+}
 
 export { SupplyDialogProps, AssetItem, PositionTokenProps };
