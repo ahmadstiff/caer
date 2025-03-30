@@ -110,7 +110,7 @@ export const WithdrawDialog = () => {
   const wethBalance = useWethBalance();
   const collateralBalance = useCollateralBalance();
 
-  console.log(collateralBalance)
+  
 
   const { writeContract, isPending } = useWriteContract();
 

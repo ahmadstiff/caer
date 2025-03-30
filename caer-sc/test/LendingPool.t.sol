@@ -121,7 +121,7 @@ contract LendingPoolFactoryTest is Test {
         vm.startPrank(bob);
         IERC20(address(weth)).approve(address(lendingPool), 150e18);
         lendingPool.supplyCollateralByPosition(150e18);
-        lendingPool.borrowByPosition(500e6);
+        lendingPool.borrowByPosition(500e6, bob);
         vm.warp(block.timestamp + 365 days);
         lendingPool.accrueInterest();
         vm.stopPrank();
@@ -158,7 +158,7 @@ contract LendingPoolFactoryTest is Test {
         lendingPool.supplyCollateralByPosition(lended);
 
         // bob borrow usdc
-        lendingPool.borrowByPosition(borrowed);
+        lendingPool.borrowByPosition(borrowed, bob);
 
         uint256 tempBobBalanceUSDC2 = IERC20(address(usdc)).balanceOf(bob);
         uint256 tempBobBalanceWETH2 = IERC20(address(weth)).balanceOf(bob);
@@ -379,7 +379,7 @@ contract LendingPoolFactoryTest is Test {
         console.log("Bob supply Assets 5eth", lendingPool.userCollaterals(bob));
         console.log("----------------------------------------------------------------");
 
-        lendingPool.borrowByPosition(500e6);
+        lendingPool.borrowByPosition(500e6, bob);
         console.log("----------------------------------------------------------------");
         console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
         console.log("Bob borrow assets", lendingPool.totalBorrowAssets());
@@ -419,7 +419,7 @@ contract LendingPoolFactoryTest is Test {
         console.log("----------------------------------------------------------------");
         vm.warp(block.timestamp + 365 days);
 
-        lendingPool.borrowByPosition(100e6);
+        lendingPool.borrowByPosition(100e6, bob);
         console.log("----------------------------------------------------------------");
         console.log("Bob weth", lendingPool.userCollaterals(bob));
         console.log("Bob borrow shares", lendingPool.userBorrowShares(bob));
@@ -507,7 +507,7 @@ contract LendingPoolFactoryTest is Test {
         IERC20(weth).approve(address(lendingPool), 10e18);
         lendingPool.supplyCollateralByPosition(10e18);
         assertEq(lendingPool.userCollaterals(bob), 10e18);
-        lendingPool.borrowByPosition(2000e6);
+        lendingPool.borrowByPosition(2000e6, bob);
         assertEq(lendingPool.userBorrowShares(bob), 2000e6);
 
         // vm.expectRevert(LendingPool.PositionUnavailable.selector);
