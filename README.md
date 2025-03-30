@@ -45,5 +45,17 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Presentation Slides:** [https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## 🔗 Smart Contracts
-- **Main Contract**: ``
-- 
+### LendingPool
+- **Contract Name:** LendingPool
+- **Contract Address:** 0xb56af39faec48d00c5261dcbb0eea1891ca72f7d
+
+### LendingPoolSequencer
+- **Contract Name:** LendingPoolSequencer
+- **Contract Address:** 0xd418e17746f728da31508dd47a33834b8773d07c
+
+### MockUSDC
+- **Contract Name:** MockUSDC
+- **Contract Address:** 0x66bbf06f9f42effffcded87078cb9c80f5d7054e
+
+## 🔗 API
+- **Sequencer:** http://solver-caer-fi.vercel.app
