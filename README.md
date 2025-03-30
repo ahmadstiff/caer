@@ -38,11 +38,13 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Scalable & Future-Proof**: Built with a modular architecture, Caér is designed to evolve alongside emerging blockchain innovations, ensuring long-term sustainability in the DeFi ecosystem.
 
 ## 🔗 Links
-- **Website:** [https://caer-fi.vercel.app/](https://caer-fi.vercel.app/)
-- **Documentation:** [https://caer.gitbook.io/caer](https://caer.gitbook.io/caer)
-- **Organization:** [https://github.com/ahmadstiff/caer](https://github.com/ahmadstiff/caer)
-- **Video Demonstration:**  [youtube.com](www.youtube.com)
-- **Presentation Slides:** [https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+- **Website:** <a href="https://caer-fi.vercel.app/" target="_blank">https://caer-fi.vercel.app/</a>
+- **Documentation:** <a href="https://caer.gitbook.io/caer" target="_blank">https://caer.gitbook.io/caer</a>
+- **Organization:** <a href="https://github.com/ahmadstiff/caer" target="_blank">https://github.com/ahmadstiff/caer</a>
+- **Video Demonstration:** <a href="https://www.youtube.com" target="_blank">YouTube</a>
+- **Presentation Slides:** <a href="https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank">Canva Slides</a>
+
 
 ## 🔗 Smart Contracts
 ### LendingPool
