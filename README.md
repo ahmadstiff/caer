@@ -44,20 +44,30 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Organization:** <a href="https://github.com/ahmadstiff/caer" target="_blank">https://github.com/ahmadstiff/caer</a>
 - **Video Demonstration:** <a href="https://www.youtube.com" target="_blank">YouTube</a>
 - **Presentation Slides:** <a href="https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank">Canva Slides</a>
+- **Faucets on Arbitrum:** <a href="https://caer-fi.vercel.app/faucets" target="_blank">https://caer-fi.vercel.app/faucets</a> 
 
 
-## 🔗 Smart Contracts
-### LendingPool
+## 🔗 Smart Contracts 
+### LendingPool ‼Deployed on Rollup (CACHAIN)
 - **Contract Name:** LendingPool
 - **Contract Address:** 0xb56af39faec48d00c5261dcbb0eea1891ca72f7d
 
-### LendingPoolSequencer
+### LendingPoolSequencer ‼Deployed on Rollup (CACHAIN)
 - **Contract Name:** LendingPoolSequencer
 - **Contract Address:** 0xd418e17746f728da31508dd47a33834b8773d07c
 
-### MockUSDC
+### MockUSDC ‼Import Token Contract Address to Your Wallet
 - **Contract Name:** MockUSDC
 - **Contract Address:** 0x66bbf06f9f42effffcded87078cb9c80f5d7054e
 
 ## 🔗 API
 - **Sequencer:** http://solver-caer-fi.vercel.app
+
+## Arbitrum Sepolia
+- **RPC URL:** https://sepolia-rollup.arbitrum.io/rpc
+- **Chain ID:** 421614
+- **Blockexplorer:** https://sepolia.arbiscan.io/
+
+## CACHAIN
+- **RPC URL:** http://44.213.128.45:8547/
+- **Chain ID:** 62851553
