@@ -25,10 +25,10 @@ const LendingData = () => {
                 <thead>
                   <tr className="border-b border-gray-900">
                     <th className="text-center p-4 text-sm font-medium text-gray-400">
-                      Supply Liquidity
+                      Loan
                     </th>
                     <th className="text-left p-4 text-sm font-medium text-gray-400">
-                      <div className="flex items-center">Deposits</div>
+                      <div className="flex items-center">Liquidity</div>
                     </th>
 
                     <th className="text-left p-4 text-sm font-medium text-gray-400">
