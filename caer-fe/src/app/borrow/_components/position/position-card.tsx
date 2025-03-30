@@ -9,27 +9,35 @@ import {
   HandCoins,
   TrendingUp,
   CircleDollarSign,
+  Plus,
+  Loader2,
 } from "lucide-react";
 
-import { mockUsdc, mockUsde, mockWbtc, mockWeth } from "@/constants/addresses";
+import {
+  lendingPool,
+  mockUsdc,
+  mockWbtc,
+  mockWeth,
+} from "@/constants/addresses";
 import type { Address } from "viem";
 import { TOKEN_OPTIONS } from "@/constants/tokenOption";
 import PositionToken from "./position-token";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 import { useBorrowBalance } from "@/hooks/useBorrowBalance";
-
+import SelectPosition from "./selectPosition";
+import { useWriteContract } from "wagmi";
+import { poolAbi } from "@/lib/abi/poolAbi";
 const PositionCard = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const {
-    checkAvailability,
-    collateralAddress,
-    borrowAddress,
-    userCollateral,
-  } = useReadLendingData();
+  const [positionAddress, setPositionAddress] = useState<string | undefined>(
+    undefined
+  );
+  const [positionLength, setPositionLength] = useState<number>(0);
+
+  const { collateralAddress, borrowAddress, userCollateral } =
+    useReadLendingData();
 
   const userBorrowShares = useBorrowBalance();
-
-  const addressPosition = checkAvailability as `0x${string}` | undefined;
 
   const findNameToken = (address: Address | unknown) => {
     const token = TOKEN_OPTIONS.find((asset) => asset.address === address);
@@ -40,6 +48,18 @@ const PositionCard = () => {
     const realAmount = Number(amount) ? Number(amount) / decimal : 0; // convert to USDC
     return realAmount;
   };
+  const {
+    isPending: isPositionPending,
+    writeContract: createPositionTransaction,
+  } = useWriteContract();
+  const handleAddPosition = () => {
+    createPositionTransaction({
+      address: lendingPool,
+      abi: poolAbi,
+      functionName: "createPosition",
+      args: [],
+    });
+  };
 
   return (
     <Card className="bg-slate-900/50 border border-slate-800 shadow-lg overflow-hidden">
@@ -47,7 +67,39 @@ const PositionCard = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 py-2">
             <CircleDollarSign className="h-5 w-5 text-blue-500" />
-            <CardTitle className="text-xl text-white">Your Position</CardTitle>
+            <CardTitle className="text-xl text-white w-full">
+              <div className="flex items-center gap-1">
+                <div>Your Position</div>
+                <div className="ml-3">
+                  <SelectPosition
+                    positionAddress={positionAddress}
+                    setPositionAddress={setPositionAddress}
+                    setPositionLength={setPositionLength}
+                  />
+                </div>
+                <div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={isPositionPending}
+                    className="ml-3 bg-gradient-to-r from-indigo-400 to-blue-600  hover:from-indigo-500 hover:to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-colors duration-300 rounded-lg cursor-pointer"
+                    onClick={handleAddPosition}
+                  >
+                    {isPositionPending ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        <span>Processing Transaction...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-white">
+                        <Plus className="h-4 w-4" />
+                        Add Position
+                      </div>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardTitle>
           </div>
           <Button
             variant="ghost"
@@ -105,22 +157,26 @@ const PositionCard = () => {
             </div>
 
             <div className="overflow-x-auto rounded-lg border border-slate-800">
-              {checkAvailability ===
-              "0x0000000000000000000000000000000000000000" ? (
+              {positionAddress === undefined ? (
                 <div className="flex flex-col items-center justify-center gap-4 p-8 text-center">
                   <div className="bg-slate-800/50 p-4 rounded-full">
                     <Wallet className="h-10 w-10 text-slate-500" />
                   </div>
                   <span className="text-xl md:text-2xl text-slate-300">
-                    No positions available
+                    {positionLength === 0
+                      ? "No positions available"
+                      : "Select position address"}
                   </span>
                   <p className="text-sm text-slate-500 max-w-md">
-                    You don't have any active positions. Start by supplying
-                    collateral and borrowing assets.
+                    {positionLength === 0
+                      ? "You don't have any active positions. Start by supplying collateral and borrowing assets."
+                      : "Select a position address to view your position."}
                   </p>
-                  <Button className="mt-2 bg-blue-600 hover:bg-blue-700">
-                    Create Position
-                  </Button>
+                  {positionLength === 0 && (
+                    <Button className="mt-2 bg-blue-600 hover:bg-blue-700">
+                      Create Position
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -135,28 +191,21 @@ const PositionCard = () => {
                       name={findNameToken(mockWeth)}
                       address={mockWeth}
                       decimal={1e18}
-                      addressPosition={addressPosition}
+                      addressPosition={positionAddress as `0x${string}`}
                     />
                     {/* WBTC */}
                     <PositionToken
                       name={findNameToken(mockWbtc)}
                       address={mockWbtc}
                       decimal={1e8}
-                      addressPosition={addressPosition}
-                    />
-                    {/* USDE */}
-                    <PositionToken
-                      name={findNameToken(mockUsde)}
-                      address={mockUsde}
-                      decimal={1e8}
-                      addressPosition={addressPosition}
+                      addressPosition={positionAddress as `0x${string}`}
                     />
                     {/* USDC */}
                     <PositionToken
                       name={findNameToken(mockUsdc)}
                       address={mockUsdc}
                       decimal={1e6}
-                      addressPosition={addressPosition}
+                      addressPosition={positionAddress as `0x${string}`}
                     />
                   </div>
                 </div>

@@ -30,9 +30,8 @@ const PositionToken = ({
     args: [address as Address],
   });
 
-
-  const convertRealAmount = (amount: number, decimal: number) => {
-    const realAmount = Number(amount) ? Number(amount) / decimal : 0;
+  const convertRealAmount = (amount: bigint | undefined, decimal: number) => {
+    const realAmount = amount ? Number(amount) / decimal : 0;
     return realAmount;
   };
 
@@ -43,8 +42,8 @@ const PositionToken = ({
 
   const tokenBalance =
     collateralAddress === address
-      ? convertRealAmount(Number(userCollateral), decimal).toFixed(2)
-      : convertRealAmount(Number(tokenBalanceUSDC), decimal).toFixed(2);
+      ? convertRealAmount(userCollateral as bigint, decimal).toFixed(2)
+      : convertRealAmount(tokenBalanceUSDC as bigint, decimal).toFixed(2);
 
   return (
     <div className="grid grid-cols-3 gap-2 p-3 items-center hover:bg-slate-800/20 transition-colors">

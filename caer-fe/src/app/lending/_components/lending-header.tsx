@@ -29,7 +29,7 @@ export default function LendingHeader() {
                 </div>
               </div>
               <CardDescription className="text-slate-400">
-                Total aset yang terkunci dalam protokol
+                Total assets locked in the protocol
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -57,7 +57,7 @@ export default function LendingHeader() {
                 </div>
               </div>
               <CardDescription className="text-slate-400">
-                Total aset yang disediakan oleh pengguna
+                Liquidity that user can use to borrow
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -85,7 +85,7 @@ export default function LendingHeader() {
                 </div>
               </div>
               <CardDescription className="text-slate-400">
-                Total aset yang dipinjam dari protokol
+                Total assets borrowed from the protocol
               </CardDescription>
             </CardHeader>
             <CardContent>

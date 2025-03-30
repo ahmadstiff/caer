@@ -1,11 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
-import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
-import BorrowDialog from "@/components/dialog/borrow-dialog";
+import BorrowDialog from "@/components/dialog/borrow/borrow-dialog";
 import { RepayDialog } from "@/components/dialog/repay-dialog";
 import SupplyDialogCol from "@/components/dialog/suppy-collateral-dialog";
 import { WithdrawDialog } from "@/components/dialog/withdraw-collateral-dialog";
@@ -80,10 +78,10 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {formatValue((userCollateral))}
+                {/* {formatValue((userCollateral))} */}
               </div>
               <div className="text-xs text-slate-400">
-                ≈ {formatUSD((userCollateral))}
+                {/* ≈ {formatUSD((userCollateral))} */}
               </div>
             </div>
             <div className="flex gap-2 ">
@@ -126,10 +124,10 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {formatValue(Number(tokenBalanceByPosition), 6)}
+                {/* {formatValue(Number(tokenBalanceByPosition), 6)} */}
               </div>
               <div className="text-xs text-slate-400">
-                ≈ {formatUSD(Number(tokenBalanceByPosition), 6)}
+                {/* ≈ {formatUSD(Number(tokenBalanceByPosition), 6)} */}
               </div>
             </div>
             <div className="flex gap-2">

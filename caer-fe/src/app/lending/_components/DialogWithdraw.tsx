@@ -46,10 +46,10 @@ const DialogWithdraw = () => {
     const supplyAmountBigInt = BigInt(Number(amount) * 10 ** 6);
 
     try {
-      await withdrawTransaction({
+      withdrawTransaction({
         abi: poolAbi,
-        address: `0x${lendingPool}`,
-        functionName: "withdraw",
+        address: lendingPool,
+        functionName: "withdraw", 
         args: [supplyAmountBigInt],
       });
 
@@ -63,7 +63,7 @@ const DialogWithdraw = () => {
   };
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen} aria-describedby="dialog-description">
         <DialogTrigger asChild>
           <Button
             className="bg-gradient-to-r from-indigo-400 to-blue-600  hover:from-indigo-500 hover:to-blue-600 text-white font-medium shadow-md hover:shadow-lg transition-colors duration-300 rounded-lg cursor-pointer"
@@ -72,7 +72,10 @@ const DialogWithdraw = () => {
             Withdraw
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md bg-gradient-to-b from-white to-slate-50 border-0 shadow-xl rounded-xl">
+        <DialogContent
+          className="sm:max-w-md bg-gradient-to-b from-white to-slate-50 border-0 shadow-xl rounded-xl"
+          aria-describedby="dialog-descriptionx"
+        >
           <DialogHeader className="pb-2 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <CreditCard className="h-6 w-6 text-blue-500" />
@@ -112,11 +115,11 @@ const DialogWithdraw = () => {
                 </div>
 
                 <div className="flex justify-between items-center text-xs mt-2">
-                  <span className="text-gray-400">Your balance : </span>
+                  <span className="text-gray-400">Your Supply : </span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className=" text-gray-600">{String(userSupply)}</span>
+                    <span className="text-gray-600">{String(Number(userSupply) / 1e6)}</span>
                     <button
-                      onClick={() => setAmount(String(userSupply))}
+                      onClick={() => setAmount(String(Number(userSupply) / 1e6))}
                       className="text-xs px-2 p-0.5 border border-blue-500 rounded-md text-blue-500 hover:bg-blue-200 cursor-pointer duration-300 transition-colors"
                     >
                       Max

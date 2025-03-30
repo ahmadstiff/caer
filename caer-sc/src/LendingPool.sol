@@ -35,7 +35,6 @@ interface IPosition {
 contract LendingPool is ReentrancyGuard {
     using SafeERC20 for IERC20; // fungsi dari IERC20 akan ketambahan SafeERC20
 
-    error FlashloanFailed();
     error InsufficientCollateral();
     error InsufficientLiquidity();
     error InsufficientShares();
@@ -44,10 +43,7 @@ contract LendingPool is ReentrancyGuard {
     error LTVExceedMaxAmount();
     error PositionNotCreated();
     error PositionUnavailable();
-    error ProhibitedToBuy();
-    error SwitchToCollateralToken();
     error TokenNotAvailable();
-    error TradingAccountListed();
     error ZeroAmount();
 
     event Supply(address user, uint256 amount, uint256 shares);
@@ -57,7 +53,6 @@ contract LendingPool is ReentrancyGuard {
     event BorrowByPosition(address user, uint256 amount, uint256 shares, bool bridge);
     event RepayByPosition(address user, uint256 amount, uint256 shares);
     event RepayWithCollateralByPosition(address user, uint256 amount, uint256 shares);
-    event Flashloan(address user, address token, uint256 amount);
     event SwapByPosition(address user, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
     event CreatePosition(address user, address positionAddress);
 

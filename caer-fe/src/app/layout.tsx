@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Geist, Azeret_Mono as Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -7,9 +7,9 @@ import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { config } from "@/lib/wagmi";
-import { useState } from "react";
 import Navbar from "@/components/navbar";
 import { Toaster } from "sonner";
+import Providers from "./Providers";
 
 // Initialize fonts
 const geistSans = Geist({
@@ -51,7 +51,9 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
                 <div className="relative z-99">
                   <Navbar />
                 </div>
-                <div className="mt-5 relative z-10">{children}</div>
+                <div className="mt-5 relative z-10">
+                  <Providers>{children}</Providers>
+                </div>
                 <Toaster />
               </div>
             </RainbowKitProvider>
