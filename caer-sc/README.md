@@ -1,4 +1,4 @@
-# 🛠 Deploy & Validate Smart Contracts with Foundry (TraCrafter)
+# 🛠 Deploy & Validate Smart Contracts with Foundry (Caér)
 
 This guide details the process to deploy, test, and verify the smart contracts for the TraCrafter project using [Foundry](https://github.com/foundry-rs/foundry).
 
@@ -19,8 +19,8 @@ Before you begin, ensure your system has the following installed:
 ## 📋 Clone the Repository
 Clone the TraCrafter smart contracts repository from GitHub:
 ```sh
-git clone https://github.com/ghozzza/Tracrafter.git
-cd smart-contracts
+git clone https://github.com/ahmadstiff/caer
+cd caer-sc
 ```
 
 ---
