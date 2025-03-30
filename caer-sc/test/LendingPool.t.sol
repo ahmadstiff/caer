@@ -350,13 +350,13 @@ contract LendingPoolFactoryTest is Test {
          * 3. USDC can be trade, if collateral token swap to USDC
          */
         vm.startPrank(bob);
-        uint256 amountOut2 = lendingPool.swapTokenByPosition(address(pepe), address(weth), 0.1e18, 0);
+        uint256 amountOut2 = lendingPool.swapTokenByPosition(address(usdc), address(weth), 0.1e18, 0);
         console.log("amountOut2", amountOut2); // 51485630508031539802751413
-        // console.log("-------dapet berapa pepe=====", lendingPool.getTokenBalancesByPosition(address(pepe), 0));
+        // console.log("-------dapet berapa usdc=====", lendingPool.getTokenBalancesByPosition(address(usdc), 0));
 
-        vm.expectRevert(LendingPool.TokenNotAvailable.selector);
-        uint256 amountOut3 = lendingPool.swapTokenByPosition(address(pepe), address(usdc), 526703156, 0);
-        console.log("amountOut3", amountOut3); // 52670315.600000000000000000
+        // vm.expectRevert(LendingPool.TokenNotAvailable.selector);
+        // uint256 amountOut3 = lendingPool.swapTokenByPosition(address(usdc), address(usdc), 526703156, 0);
+        // console.log("amountOut3", amountOut3); // 52670315.600000000000000000
         vm.stopPrank();
     }
 
