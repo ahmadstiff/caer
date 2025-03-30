@@ -78,10 +78,10 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {formatValue((userCollateral))}
+                {/* {formatValue((userCollateral))} */}
               </div>
               <div className="text-xs text-slate-400">
-                ≈ {formatUSD((userCollateral))}
+                {/* ≈ {formatUSD((userCollateral))} */}
               </div>
             </div>
             <div className="flex gap-2 ">
@@ -124,10 +124,10 @@ const PoolData = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-white">
-                {formatValue(Number(tokenBalanceByPosition), 6)}
+                {/* {formatValue(Number(tokenBalanceByPosition), 6)} */}
               </div>
               <div className="text-xs text-slate-400">
-                ≈ {formatUSD(Number(tokenBalanceByPosition), 6)}
+                {/* ≈ {formatUSD(Number(tokenBalanceByPosition), 6)} */}
               </div>
             </div>
             <div className="flex gap-2">
