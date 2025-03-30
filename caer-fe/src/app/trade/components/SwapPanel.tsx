@@ -1,4 +1,5 @@
 'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { ArrowDownIcon } from '@heroicons/react/24/outline';
@@ -76,24 +77,40 @@ export default function SwapPanel() {
             return;
         }
 
-        await swapToken({
-            fromToken: {
-                address: fromToken.address,
-                name: fromToken.name,
-                decimals: fromToken.decimals
-            },
-            toToken: {
-                address: toToken.address,
-                name: toToken.name
-            },
-            fromAmount,
-            toAmount,
-            onSuccess: () => {
-                // Reset form after successful swap
-                setFromAmount('');
-                setToAmount('');
-            }
-        });
+        try {
+            const slippagePercent = parseFloat(slippage);
+            const minToAmount = parseFloat(toAmount) * (1 - slippagePercent / 100);
+
+            // Asumsi positionIndex adalah 0 (dapat diubah jika user memiliki multiple positions)
+            const positionIndex = 0;
+
+            await swapToken({
+                fromToken: {
+                    address: fromToken.address as Address,
+                    name: fromToken.name,
+                    decimals: fromToken.decimals
+                },
+                toToken: {
+                    address: toToken.address as Address,
+                    name: toToken.name,
+                    decimals: toToken.decimals
+                },
+                fromAmount,
+                toAmount,
+                slippage: slippagePercent,
+                minAmountOut: minToAmount.toString(),
+                positionIndex, // Tambahkan positionIndex yang diperlukan oleh kontrak
+                onSuccess: () => {
+                    // Reset form after successful swap
+                    setFromAmount('');
+                    setToAmount('');
+
+                }
+            });
+        } catch (err) {
+            console.error('Swap error:', err);
+            setError(err instanceof Error ? err.message : 'Failed to execute swap. Please try again.');
+        }
     };
 
     // Determine button text based on client-side state only
