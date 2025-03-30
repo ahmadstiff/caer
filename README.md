@@ -9,7 +9,7 @@ Welcome to Caér, an innovative lending, borrowing, and swapping protocol built 
 Caér is a next-generation lending, borrowing, and swapping protocol designed to enable seamless cross-chain interactions through Espresso integration. By leveraging Espresso's cutting-edge verification system, Caér ensures efficient, secure, and decentralized liquidity access across multiple blockchain ecosystems. With a sequencer and solver, Caér redefines decentralized finance by optimizing capital efficiency while maintaining a trustless execution model.
 
 ## 🚀 Demo
-[Live Demo]()
+[Live Demo](https://caer-fi.vercel.app/)
 
 ## 📸 Project Screenshots
 ![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/caer-home.png)
@@ -42,7 +42,7 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Website:** <a href="https://caer-fi.vercel.app/" target="_blank">https://caer-fi.vercel.app/</a>
 - **Documentation:** <a href="https://caer.gitbook.io/caer" target="_blank">https://caer.gitbook.io/caer</a>
 - **Organization:** <a href="https://github.com/ahmadstiff/caer" target="_blank">https://github.com/ahmadstiff/caer</a>
-- **Video Demonstration:** <a href="https://www.youtube.com" target="_blank">YouTube</a>
+- **Video Demonstration:** <a href="https://youtu.be/jDS6Dr4EtIQ" target="_blank">YouTube</a>
 - **Presentation Slides:** <a href="https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank">Canva Slides</a>
 - **Faucets on Arbitrum:** <a href="https://caer-fi.vercel.app/faucets" target="_blank">https://caer-fi.vercel.app/faucets</a> 
 
