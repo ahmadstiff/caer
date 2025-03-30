@@ -12,7 +12,7 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 [Live Demo]()
 
 ## 📸 Project Screenshots
-![image]()
+![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/caer-home.png)
 ## Key Features
 
 - **Espresso-Powered Confirmation**: Caér utilizes Espresso for confirmation verification, ensuring fast and secure transaction finality. This enables a highly scalable lending and borrowing experience across chains without relying on centralized validators.
@@ -38,11 +38,11 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Scalable & Future-Proof**: Built with a modular architecture, Caér is designed to evolve alongside emerging blockchain innovations, ensuring long-term sustainability in the DeFi ecosystem.
 
 ## 🔗 Links
-- **Website:** [Vercel link](https://)
+- **Website:** [https://caer-fi.vercel.app/](https://caer-fi.vercel.app/)
 - **Documentation:** [https://caer.gitbook.io/caer](https://caer.gitbook.io/caer)
 - **Organization:** [https://github.com/ahmadstiff/caer](https://github.com/ahmadstiff/caer)
 - **Video Demonstration:**  [youtube.com](www.youtube.com)
-- **Presentation Slides:** [canva](canva.com)
+- **Presentation Slides:** [https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## 🔗 Smart Contracts
 - **Main Contract**: ``
