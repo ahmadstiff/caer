@@ -27,8 +27,8 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/caer.git
-cd caer
+git clone https://github.com/ahmadstiff/caer
+cd caer-fe
 ```
 
 2. Install dependencies:
