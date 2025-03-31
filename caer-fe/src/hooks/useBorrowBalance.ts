@@ -1,6 +1,5 @@
 import { lendingPool } from "@/constants/addresses";
 import { poolAbi } from "@/lib/abi/poolAbi";
-import { Address } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 
 export const useBorrowBalance = () => {

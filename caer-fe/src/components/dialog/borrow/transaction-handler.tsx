@@ -1,15 +1,6 @@
-import { toast } from "@/components/ui/use-toast"; // Menggunakan toast yang telah dikustomisasi dengan Sonner
 import { useSignMessage, useAccount } from "wagmi";
-
-interface TransactionHandlerProps {
-  amount: string;
-  token: string;
-  fromChain: any;
-  toChain: any;
-  recipientAddress: string;
-  onSuccess: () => void;
-  onLoading: (loading: boolean) => void;
-}
+import { toast } from "@/components/ui/use-toast"; // Updated import to use your custom toast
+import { TransactionHandlerProps } from "@/types/type";
 
 export default function useTransactionHandler({
   amount,
@@ -70,24 +61,58 @@ export default function useTransactionHandler({
       const fromChainEmoji = getChainEmoji(fromChain.name);
       const toChainEmoji = getChainEmoji(toChain.name);
 
-      // Tampilkan toast loading dengan informasi lebih detail
+      // Show loading toast with more details
       toast({
         title: `⏳ Bridging ${amount} ${token}...`,
         description: `${fromChainEmoji} **${fromChain.name}** → ${toChainEmoji} **${toChain.name}**\n\nPreparing your cross-chain transaction. This may take a moment...`,
         variant: "info",
       });
 
-      // Pesan yang akan ditandatangani dengan format yang lebih menarik
-      const messageToSign = `🌉 Cross-Chain Bridge Request:
-💰 Amount: ${amount} ${token}
-${fromChainEmoji} From: ${fromChain.name} (Chain ID: ${fromChain.id})
-${toChainEmoji} To: ${toChain.name} (Chain ID: ${toChain.id})
-📬 Recipient: ${recipientAddress.slice(0, 6)}...${recipientAddress.slice(-4)}
-⏱️ Timestamp: ${new Date().toLocaleString()}`;
+      // Generate a unique request ID
+      const requestId = `REQ-${Math.random()
+        .toString(36)
+        .substring(2, 10)
+        .toUpperCase()}-${Date.now().toString().substring(9)}`;
+
+      // Format timestamp in ISO format for better standardization
+      const timestamp = new Date().toISOString();
+      const readableDate = new Date().toLocaleString();
+
+      // Calculate estimated gas fees (this would be replaced with actual calculation in production)
+      const estimatedGasFee = (Number(amount) * 0.002).toFixed(6);
+
+      // Enhanced professional message to sign
+      const messageToSign = `
+=== CAER FINANCE: SECURE CROSS-CHAIN BRIDGE REQUEST ===
+
+REQUEST ID: ${requestId}
+TIMESTAMP: ${readableDate}
+
+TRANSACTION DETAILS:
+• Amount: ${amount} ${token}
+• From: ${fromChain.name} (Chain ID: ${fromChain.id})
+• To: ${toChain.name} (Chain ID: ${toChain.id})
+• Recipient: ${recipientAddress}
+• Estimated Gas Fee: ~${estimatedGasFee} ${token}
+
+SECURITY VERIFICATION:
+• Wallet Address: ${address}
+• Nonce: ${Date.now()}
+• Request Hash: ${btoa(address + amount + timestamp).substring(0, 16)}
+
+By signing this message, you authorize CAER Finance to process this cross-chain bridge transaction according to the details specified above. This signature does not authorize any other transactions or transfers.
+
+IMPORTANT: CAER Finance will never ask you to sign messages for any purpose other than transaction authorization. Always verify transaction details before signing.
+
+Ref: CF-${timestamp.substring(0, 10)}-${Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase()}
+`;
 
       toast({
-        title: "✍️ Signature Required",
-        description: `${fromChainEmoji} → ${toChainEmoji} Please sign the message in your wallet to authorize sending **${amount} ${token}** from **${fromChain.name}** to **${toChain.name}**.`,
+        title: "🔐 Secure Signature Required",
+        description: `${fromChainEmoji} → ${toChainEmoji} Please verify and sign the secure transaction request in your wallet to authorize sending **${amount} ${token}** from **${fromChain.name}** to **${toChain.name}**.`,
         variant: "info",
       });
 
@@ -99,7 +124,7 @@ ${toChainEmoji} To: ${toChain.name} (Chain ID: ${toChain.id})
         variant: "info",
       });
 
-      // Kirim request ke backend
+      // Send request to backend
       const response = await fetch(
         "https://solver-caer-fi.vercel.app/api/borrow",
         {
@@ -113,6 +138,7 @@ ${toChainEmoji} To: ${toChain.name} (Chain ID: ${toChain.id})
             toChain: toChain.id,
             signature,
             message: messageToSign,
+            requestId,
           }),
         }
       );
@@ -132,9 +158,11 @@ ${toChainEmoji} To: ${toChain.name} (Chain ID: ${toChain.id})
 
         toast({
           title: "✅ Transaction Successful!",
-          description: `${fromChainEmoji} → ${toChainEmoji} **${amount} ${token}** successfully borrow from **${
+          description: `${fromChainEmoji} → ${toChainEmoji} **${amount} ${token}** successfully borrowed from **${
             fromChain.name
-          }** to **${toChain.name}**!\n\n$`,
+          }** to **${toChain.name}**!\n\n${
+            txHash ? `Transaction: ${formattedTxHash}` : ""
+          } usdc token 0x66bbf06f9f42effffcded87078cb9c80f5d7054e`,
           variant: "success",
         });
 

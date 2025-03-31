@@ -26,5 +26,50 @@ export interface Chain {
   type: string;
   logoUrl: string;
 }
+export interface ChainSelectorProps {
+  onSelect: (chain: Chain) => void;
+  onClose: () => void;
+  selectorType: "from" | "to";
+}
 
-export { SupplyDialogProps, AssetItem, PositionTokenProps };
+export interface SwapTokenParams {
+  fromToken: {
+    address: string;
+    name: string;
+    decimals: number;
+  };
+  toToken: {
+    address: string;
+    name: string;
+    decimals: number;
+  };
+  fromAmount: string;
+  toAmount: string;
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface CreatePositionsResponse {
+  createPositions: Array<{
+    id: string;
+    user: string;
+    blockNumber: string;
+    positionAddress: string;
+  }>;
+}
+
+interface TransactionHandlerProps {
+  amount: string;
+  token: string;
+  fromChain: any;
+  toChain: any;
+  recipientAddress: string;
+  onSuccess: () => void;
+  onLoading: (loading: boolean) => void;
+}
+export {
+  SupplyDialogProps,
+  AssetItem,
+  TransactionHandlerProps,
+  PositionTokenProps,
+};

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAccount, useWriteContract } from "wagmi";
-import { Address, formatUnits } from "viem";
+import { useState } from "react";
+import { useWriteContract } from "wagmi";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

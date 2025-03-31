@@ -63,12 +63,15 @@ export default function ChainSelectorButton({
             <span className="font-medium">{fromChain.name}</span>
           </button>
         </div>
-        <button
-          className="bg-gray-100 p-2 rounded-full"
-          onClick={handleSwapChains}
-        >
-          <ArrowRightLeft className="h-5 w-5 text-gray-600" />
-        </button>
+        <div className="flex items-center justify-center">
+          <button
+            className="bg-gray-100 p-2 rounded-full mt-7 hover:bg-gray-200 transition-colors"
+            onClick={handleSwapChains}
+            aria-label="Swap chains"
+          >
+            <ArrowRightLeft className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
         <div className="w-[45%]">
           <p className="text-sm text-gray-600 mb-2">To</p>
           <button

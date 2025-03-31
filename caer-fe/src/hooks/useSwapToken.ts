@@ -3,27 +3,10 @@
 import { useState } from "react";
 import { useAccount, useWriteContract } from "wagmi";
 import { erc20Abi, parseUnits } from "viem";
-import { Address } from "viem";
 import { lendingPool } from "@/constants/addresses";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { toast } from "sonner";
-
-interface SwapTokenParams {
-  fromToken: {
-    address: string;
-    name: string;
-    decimals: number;
-  };
-  toToken: {
-    address: string;
-    name: string;
-    decimals: number;
-  };
-  fromAmount: string;
-  toAmount: string;
-  onSuccess?: () => void;
-  onError?: (error: Error) => void;
-}
+import { SwapTokenParams } from "@/types/type";
 
 export const useSwapToken = () => {
   const { address } = useAccount();

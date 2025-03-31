@@ -1,46 +1,56 @@
+import { useState, useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseUnits } from "viem";
-import { poolAbi } from "@/lib/abi/poolAbi";
 import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
+import { poolAbi } from "@/lib/abi/poolAbi";
 import { lendingPool, mockWeth } from "@/constants/addresses";
-import { usePositionStatus } from "./usePositionStatus";
 
 export function useSupplyCollateral() {
-  const { hasPosition, refetch } = usePositionStatus();
-  const { data: approveHash, writeContract: approveTransaction } =
-    useWriteContract();
-  const { data: supplyHash, writeContract: supplyTransaction } =
-    useWriteContract();
-  const { data: positionHash, writeContract: createPositionTransaction } =
-    useWriteContract();
+  const [amount, setAmount] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isBlurred, setIsBlurred] = useState(false);
+
+  const {
+    data: approveHash,
+    isPending: isApprovePending,
+    writeContract: approveTransaction,
+  } = useWriteContract();
+
+  const {
+    data: supplyHash,
+    isPending: isSupplyPending,
+    writeContract: supplyTransaction,
+  } = useWriteContract();
 
   const { isLoading: isApproveLoading } = useWaitForTransactionReceipt({
     hash: approveHash,
   });
   const { isLoading: isSupplyLoading, isSuccess } =
     useWaitForTransactionReceipt({ hash: supplyHash });
-  const { isLoading: isPositionLoading } = useWaitForTransactionReceipt({
-    hash: positionHash,
-  });
 
-  const handleSupply = async (amount: { toString: () => string }) => {
-    if (!amount || Number(amount) <= 0) {
-      alert("Please enter a valid amount to supply");
-      return;
+  useEffect(() => {
+    if (isSuccess) {
+      setIsOpen(false);
+      setIsBlurred(false);
     }
+  }, [isSuccess]);
 
-    const parsedAmount = parseUnits(amount.toString(), 18);
+  useEffect(() => {
+    if (isOpen) {
+      setIsBlurred(true);
+    } else {
+      setTimeout(() => setIsBlurred(false), 300);
+    }
+  }, [isOpen]);
 
+  const handleSupply = async () => {
     try {
-      if (!hasPosition) {
-        await createPositionTransaction({
-          address: lendingPool,
-          abi: poolAbi,
-          functionName: "createPosition",
-          args: [],
-        });
-        await refetch();
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        alert("Please enter a valid amount to supply");
+        return;
       }
+
+      const parsedAmount = parseUnits(amount.toString(), 18);
 
       await approveTransaction({
         abi: mockErc20Abi,
@@ -55,14 +65,22 @@ export function useSupplyCollateral() {
         functionName: "supplyCollateralByPosition",
         args: [parsedAmount],
       });
+      setAmount("");
     } catch (error) {
-      alert(`Supply error: ${(error as Error).message}`);
+      alert("Supply error:");
     }
   };
 
+  const isProcessing =
+    isApprovePending || isSupplyPending || isApproveLoading || isSupplyLoading;
+
   return {
+    amount,
+    setAmount,
+    isOpen,
+    setIsOpen,
+    isBlurred,
     handleSupply,
-    isProcessing: isApproveLoading || isSupplyLoading || isPositionLoading,
-    isSuccess,
+    isProcessing,
   };
 }

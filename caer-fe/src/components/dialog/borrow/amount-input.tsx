@@ -25,8 +25,13 @@ export default function AmountInput({
         <p className="text-sm text-gray-600">Amount</p>
       </div>
       <div className="flex gap-4">
-        <div className="w-1/2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+        <div className="w-1/2 border border-gray-200 rounded-lg p-3 bg-gray-50 flex justify-between">
           <span className="font-medium">{token}</span>
+          <img
+            src="/usdc.png"
+            alt="Arbitrum Logo"
+            className="w-6 h-6"
+          />
         </div>
         <div className="w-1/2 flex">
           <Input

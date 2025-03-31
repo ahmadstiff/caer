@@ -6,13 +6,7 @@ import { Search, X, ChevronDown } from "lucide-react";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { Chain } from "@/types/type";
-
-interface ChainSelectorProps {
-  onSelect: (chain: Chain) => void;
-  onClose: () => void;
-  selectorType: "from" | "to";
-}
+import type { Chain, ChainSelectorProps } from "@/types/type";
 
 export default function ChainSelector({
   onSelect,

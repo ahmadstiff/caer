@@ -1,15 +1,7 @@
 import { headersGraphql } from "@/lib/subgraph/headersGraphql";
 import { urlGraphql } from "@/lib/subgraph/urlGraphql";
 import { gql, request } from "graphql-request";
-
-interface CreatePositionsResponse {
-  createPositions: Array<{
-    id: string;
-    user: string;
-    blockNumber: string;
-    positionAddress: string;
-  }>;
-}
+import { CreatePositionsResponse } from "@/types/type";
 
 export async function createPositionsByUser(address: string): Promise<
   Array<{
@@ -23,7 +15,9 @@ export async function createPositionsByUser(address: string): Promise<
     {
       createPositions(
         orderBy: blockTimestamp
-        where: { user: "${address ?? "0x6fa7DEDDEfdC6907b7a7ca1A52d338f96788b936"}" }
+        where: { user: "${
+          address ?? "0x6fa7DEDDEfdC6907b7a7ca1A52d338f96788b936"
+        }" }
       ) {
         id
         user

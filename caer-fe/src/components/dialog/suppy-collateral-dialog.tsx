@@ -1,113 +1,29 @@
 "use client";
-import { useState, useEffect } from "react";
-import {
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useReadContract,
-} from "wagmi";
-import { parseUnits } from "viem";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { poolAbi } from "@/lib/abi/poolAbi";
-import { mockErc20Abi } from "@/lib/abi/mockErc20Abi";
-import { lendingPool, mockWeth } from "@/constants/addresses";
-import { Loader2, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Loader2, Shield } from "lucide-react";
 import { useWethBalance } from "@/hooks/useTokenBalance";
+import { useSupplyCollateral } from "@/hooks/useSupplyCollateral";
 
 interface SupplyDialogProps {
   token: string | undefined;
 }
 
 export default function SupplyDialogCol({ token }: SupplyDialogProps) {
-  const [amount, setAmount] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [hasPosition, setHasPosition] = useState(false);
-
   const wethBalance = useWethBalance();
-
-  const {
-    data: approveHash,
-    isPending: isApprovePending,
-    writeContract: approveTransaction,
-  } = useWriteContract();
-
-  const {
-    data: supplyHash,
-    isPending: isSupplyPending,
-    writeContract: supplyTransaction,
-  } = useWriteContract();
-
-  const {
-    data: positionHash,
-    isPending: isPositionPending,
-    writeContract: createPositionTransaction,
-  } = useWriteContract();
-
-  const { isLoading: isApproveLoading } = useWaitForTransactionReceipt({
-    hash: approveHash,
-  });
-
-  const { isLoading: isSupplyLoading, isSuccess } =
-    useWaitForTransactionReceipt({
-      hash: supplyHash,
-    });
-
-  const { isLoading: isPositionLoading } = useWaitForTransactionReceipt({
-    hash: positionHash,
-  });
-
-  const handleSupply = async () => {
-    try {
-      if (!amount || Number.parseFloat(amount) <= 0) {
-        alert("Please enter a valid amount to supply");
-        return;
-      }
-
-      const parsedAmount = parseUnits(amount.toString(), 18);
-
-      await approveTransaction({
-        abi: mockErc20Abi,
-        address: mockWeth,
-        functionName: "approve",
-        args: [lendingPool, parsedAmount],
-      });
-
-      await supplyTransaction({
-        address: lendingPool,
-        abi: poolAbi,
-        functionName: "supplyCollateralByPosition",
-        args: [parsedAmount],
-      });
-      setAmount("");
-    } catch (error) {
-      alert("Supply error:");
-    }
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setIsOpen(false);
-    }
-  }, [isSuccess]);
-
-  const isProcessing =
-    isApprovePending ||
-    isSupplyPending ||
-    isApproveLoading ||
-    isSupplyLoading ||
-    isPositionPending ||
-    isPositionLoading;
+  const { amount, setAmount, isOpen, setIsOpen, handleSupply, isProcessing } =
+    useSupplyCollateral();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -119,7 +35,7 @@ export default function SupplyDialogCol({ token }: SupplyDialogProps) {
           Supply {token}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-gradient-to-b from-white to-slate-50 border-0 shadow-xl rounded-xl">
+      <DialogContent className="sm:max-w-md bg-gradient-to-b from-white to-slate-50 border-0 shadow-xl rounded-xl backdrop-blur-md">
         <DialogHeader className="pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-purple-500" />
@@ -127,12 +43,6 @@ export default function SupplyDialogCol({ token }: SupplyDialogProps) {
               Supply {token} as Collateral
             </DialogTitle>
           </div>
-          {!hasPosition && (
-            <DialogDescription className="mt-2 text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100 flex items-center">
-              <Shield className="h-4 w-4 mr-2 text-amber-500" />
-              You need to create a position before supplying collateral.
-            </DialogDescription>
-          )}
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -182,46 +92,6 @@ export default function SupplyDialogCol({ token }: SupplyDialogProps) {
               </div>
             </CardContent>
           </Card>
-
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-            <h4 className="text-xs font-medium text-slate-600 mb-2">
-              Transaction Steps:
-            </h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center">
-                <div
-                  className={`w-4 h-4 rounded-full mr-2 flex items-center justify-center ${
-                    !hasPosition
-                      ? "text-purple-700"
-                      : "bg-purple-500 text-white"
-                  }`}
-                >
-                  {hasPosition ? "✓" : "1"}
-                </div>
-                <span
-                  className={
-                    hasPosition
-                      ? "text-slate-400 line-through"
-                      : "text-slate-700"
-                  }
-                >
-                  Create position
-                </span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full mr-2 flex items-center justify-center text-purple-700">
-                  {hasPosition ? "1" : "2"}
-                </div>
-                <span className="text-slate-700">Approve token</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full mr-2 flex items-center justify-center text-purple-700">
-                  {hasPosition ? "2" : "3"}
-                </div>
-                <span className="text-slate-700">Supply collateral</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         <DialogFooter>
