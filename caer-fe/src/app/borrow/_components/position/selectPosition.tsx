@@ -80,7 +80,7 @@ const SelectPosition = ({
                   <SelectItem
                     className="transition-colors duration-100 cursor-pointer"
                     key={position.id}
-                    value={position.id}
+                    value={position.positionAddress}
                   >
                     {position.positionAddress}
                   </SelectItem>

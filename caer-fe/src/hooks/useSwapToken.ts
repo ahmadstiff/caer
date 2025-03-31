@@ -1,12 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
-import { erc20Abi, parseUnits } from "viem";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { erc20Abi, parseUnits, Address } from "viem";
 import { lendingPool } from "@/constants/addresses";
 import { poolAbi } from "@/lib/abi/poolAbi";
 import { toast } from "sonner";
-import { SwapTokenParams } from "@/types/type";
+
+interface SwapTokenParams {
+  fromToken: {
+    address: string;
+    name: string;
+    decimals: number;
+  };
+  toToken: {
+    address: string;
+    name: string;
+    decimals: number;
+  };
+  fromAmount: string;
+  toAmount: string;
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+  positionAddress: Address;
+  arrayLocation: bigint;
+}
 
 export const useSwapToken = () => {
   const { address } = useAccount();
@@ -21,6 +39,8 @@ export const useSwapToken = () => {
     toAmount,
     onSuccess,
     onError,
+    positionAddress,
+    arrayLocation,
   }: SwapTokenParams) => {
     if (!address) {
       setError("Please connect your wallet");
@@ -38,21 +58,27 @@ export const useSwapToken = () => {
 
       // Calculate the amount with proper decimals
       const amountIn = parseUnits(fromAmount, fromToken.decimals);
+      console.log("arrayLocation", arrayLocation);      
 
       // First approve the token spending
-      // await writeContract({
-      //   address: fromToken.address as Address,
-      //   abi: erc20Abi,
-      //   functionName: "approve",
-      //   args: [lendingPool, BigInt(amountIn) + BigInt(1000)],
-      // });
+      await writeContract({
+        address: fromToken.address as Address,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [positionAddress, BigInt(amountIn)],
+      });
 
       // Then perform the swap
       await writeContract({
         address: lendingPool,
         abi: poolAbi,
         functionName: "swapTokenByPosition",
-        args: [toToken.address, fromToken.address, BigInt(amountIn), BigInt(1)], // Position index 0
+        args: [
+          toToken.address,
+          fromToken.address,
+          BigInt(amountIn),
+          arrayLocation,
+        ], // Position index 0
       });
 
       toast.success(

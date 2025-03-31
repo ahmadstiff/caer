@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import { TOKEN_OPTIONS, TokenOption } from "@/constants/tokenOption";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { formatUnits, parseUnits, Address } from "viem";
 import Image from "next/image";
 import { usePositionBalance } from "@/hooks/useTokenBalance";
@@ -12,6 +12,8 @@ import { useSwapToken } from "@/hooks/useSwapToken";
 import { useTokenPrice } from "@/hooks/useTokenPrice";
 import { useReadLendingData } from "@/hooks/read/useReadLendingData";
 import SelectPosition from "@/app/borrow/_components/position/selectPosition";
+import { lendingPool } from "@/constants/addresses";
+import { poolAbi } from "@/lib/abi/poolAbi";
 
 export default function SwapPanel() {
   const { address } = useAccount();
@@ -44,6 +46,13 @@ export default function SwapPanel() {
   const { swapToken, isLoading, error, setError } = useSwapToken();
 
   const { userCollateral } = useReadLendingData();
+  const { data: arrayLocation } = useReadContract({
+    address: lendingPool,
+    abi: poolAbi,
+    functionName: "addressArrayLocation",
+    args: [positionAddress],
+  });
+  console.log("positionAddress", positionAddress);
 
   // Set mounted state to true after hydration
   useEffect(() => {
@@ -111,28 +120,6 @@ export default function SwapPanel() {
       // Asumsi positionIndex adalah 0 (dapat diubah jika user memiliki multiple positions)
       const positionIndex = 0;
 
-      //   await swapToken({
-      //     fromToken: {
-      //       address: fromToken.address as Address,
-      //       name: fromToken.name,
-      //       decimals: fromToken.decimals,
-      //     },
-      //     toToken: {
-      //       address: toToken.address as Address,
-      //       name: toToken.name,
-      //       decimals: toToken.decimals,
-      //     },
-      //     fromAmount,
-      //     toAmount,
-      //     slippage: slippagePercent,
-      //     minAmountOut: minToAmount.toString(),
-      //     positionIndex, // Tambahkan positionIndex yang diperlukan oleh kontrak
-      //     onSuccess: () => {
-      //       // Reset form after successful swap
-      //       setFromAmount("");
-      //       setToAmount("");
-      //     },
-      //   });
       await swapToken({
         fromToken,
         toToken,
@@ -146,6 +133,8 @@ export default function SwapPanel() {
         onError: (error) => {
           console.error("Swap error:", error);
         },
+        positionAddress: positionAddress as Address,
+        arrayLocation: arrayLocation as bigint,
       });
     } catch (err) {
       console.error("Swap error:", err);
@@ -320,9 +309,9 @@ export default function SwapPanel() {
       {/* Swap Button */}
       <button
         onClick={handleSwap}
-        disabled={isLoading || !fromAmount || !toAmount || !address}
+        disabled={isLoading || !fromAmount || !toAmount || !address || positionAddress === undefined}
         className={`w-full py-3 rounded-xl font-bold ${
-          isLoading || !fromAmount || !toAmount || !address
+          isLoading || !fromAmount || !toAmount || !address || positionAddress === undefined
             ? "bg-gray-600 text-gray-400 cursor-not-allowed"
             : "bg-blue-500 text-white hover:bg-blue-600"
         }`}

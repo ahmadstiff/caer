@@ -23,7 +23,6 @@ import {
 import { priceAbi } from "@/lib/abi/price-abi";
 import { priceFeed } from "@/constants/addresses";
 
-
 const FaucetsCardForm = () => {
   const { address } = useAccount();
   const [selectedToken, setSelectedToken] = useState<string>("");
@@ -63,8 +62,8 @@ const FaucetsCardForm = () => {
             args: [
               `${tokenName}/USD`,
               selectedToken,
-              data?.USD * 10 ** (decimal ?? 18),
-              6,
+              data?.USD * 10 ** 8,
+              decimal,
             ],
           })
         )
