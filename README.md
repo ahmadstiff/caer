@@ -111,8 +111,8 @@ This makes lending and borrowing **seamless and reliable** across multiple chain
 - **X:** <a href="https://x.com/caerfinance" target="_blank">https://x.com/caerfinance</a>
 - **Documentation:** <a href="https://caer.gitbook.io/caer" target="_blank">https://caer.gitbook.io/caer</a>
 - **Organization:** <a href="https://github.com/ahmadstiff/caer" target="_blank">https://github.com/ahmadstiff/caer</a>
-- **Video Demo Application:** <a ></a>
-- **Video CAÉR Explained:** <a ></a>
+- **Video Demo Application:** <a >https://youtu.be/omOotT8c_ww</a>
+- **Video CAÉR Presentation:** <a >https://youtu.be/wvQwUbLdZdA</a>
 - **Video Rollup’s Docker Logs:** <a href="https://youtu.be/w3oHBrDSm74" target="_blank">https://youtu.be/w3oHBrDSm74</a>
 - **Presentation Slides:** <a href="https://www.canva.com/design/DAGjBTyKvow/7S2n7qiwX6qWDzfvOIQDQA/edit?utm_content=DAGjBTyKvow&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank">Canva Slides</a>
 - **Faucets on Arbitrum:** <a href="https://caer-fi.vercel.app/faucets" target="_blank">https://caer-fi.vercel.app/faucets</a> 
