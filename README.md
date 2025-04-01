@@ -14,9 +14,6 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 ## 📸 Project Screenshots
 ![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/caer-home.png)
 
-## Flowchart
-![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/CaerFlow1.jpg)
-![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/CaerFlow2.jpg)
 
 ## Key Features
 
@@ -41,6 +38,40 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 - **Optimized Capital Efficiency**: Utilize aggregated liquidity pools across chains to maximize borrowing power while minimizing capital inefficiencies.
 
 - **Scalable & Future-Proof**: Built with a modular architecture, Caér is designed to evolve alongside emerging blockchain innovations, ensuring long-term sustainability in the DeFi ecosystem.
+
+## How we achieve cross-chain capability
+![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/CaerFlow1.jpg)
+
+### Cross-Chain Lending in Caér
+
+To enable seamless cross-chain lending and borrowing in Caér, we utilize a structured process that ensures security and efficiency. Our system leverages sequencers, Espresso confirmations, and solvers to facilitate interactions across different chains.
+
+### Cross-Chain Lending Mechanism
+
+### 1. User Collateral Deposit
+The user deposits **1 ETH** as collateral on **Chain A**.
+
+### 2. User Loan Request
+The user initiates a request to borrow **100 USDC** on **Chain B**.
+
+### 3. Sequencer Verification
+The sequencer verifies whether the user has successfully deposited **1 ETH** as collateral on **Chain A**.
+
+### 4. Espresso Confirmation & Sequencer Signature Generation
+- The sequencer leverages **Espresso confirmations** to ensure transaction finality within **sub-15 seconds**.
+- Once the collateral is confirmed, the sequencer generates a **signature**, ensuring that the deposit has been made and the loan request is valid.
+
+### 5. Transaction Processing
+- The generated **signature** is embedded into the transaction, enabling it to be processed securely.
+
+### 6. Solver Loan Execution
+- The solver, upon receiving the verified **signature**, releases **100 USDC** to the user's address on **Chain B**.
+
+### Note
+- For the purposes of this hackathon, we are using **mock tokens** to simulate transactions and interactions within the platform.
+- Additionally, the platform is operating on a **testnet environment**.
+
+
 
 ## 🔗 Links
 
