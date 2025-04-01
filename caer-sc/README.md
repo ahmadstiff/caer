@@ -1,6 +1,6 @@
 # 🛠 Deploy & Validate Smart Contracts with Foundry (Caér)
 
-This guide details the process to deploy, test, and verify the smart contracts for the TraCrafter project using [Foundry](https://github.com/foundry-rs/foundry).
+This guide details the process to deploy, test, and verify the smart contracts for the Caér project using [Foundry](https://github.com/foundry-rs/foundry).
 
 ---
 ## 📌 Prerequisites
@@ -17,7 +17,7 @@ Before you begin, ensure your system has the following installed:
 ---
 
 ## 📋 Clone the Repository
-Clone the TraCrafter smart contracts repository from GitHub:
+Clone the Caér smart contracts repository from GitHub:
 ```sh
 git clone https://github.com/ahmadstiff/caer
 cd caer-sc
@@ -65,20 +65,6 @@ anvil &
 forge script scripts/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --private-key $PRIVATE_KEY --broadcast
 ```
 
----
-
-## ✅ Verify Smart Contracts
-After deployment, verify your contracts on Etherscan:
-```sh
-forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch <DEPLOYED_CONTRACT_ADDRESS> <CONTRACT_PATH>:<CONTRACT_NAME> --etherscan-api-key $ETHERSCAN_API_KEY
-```
-Example for `IssuesClaim.sol`:
-```sh
-forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch 0xab104a8271eb37f2c244130afbc574a80dcd5c09 src/IssuesClaim.sol:IssuesClaim --etherscan-api-key $ETHERSCAN_API_KEY
-```
-
----
-
 
 ## 📜 License
 This project is licensed under the **MIT License**.
@@ -86,4 +72,4 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 🎯 Wrap-Up
-Excellent work! You have successfully deployed, tested, and verified the TraCrafter smart contracts using Foundry. If you run into any issues, double-check your environment variables or refer to the official Foundry [documentation](https://book.getfoundry.sh/) for further guidance.🚀
+Excellent work! You have successfully deployed, tested, and verified the Caér smart contracts using Foundry. If you run into any issues, double-check your environment variables or refer to the official Foundry [documentation](https://book.getfoundry.sh/) for further guidance.🚀
