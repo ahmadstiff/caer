@@ -13,6 +13,11 @@ Caér is a next-generation lending, borrowing, and swapping protocol designed to
 
 ## 📸 Project Screenshots
 ![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/caer-home.png)
+
+## Flowchart
+![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/CaerFlow1.jpg)
+![image](https://github.com/ahmadstiff/caer/blob/main/caer-fe/public/CaerFlow2.jpg)
+
 ## Key Features
 
 - **Espresso-Powered Confirmation**: Caér utilizes Espresso for confirmation verification, ensuring fast and secure transaction finality. This enables a highly scalable lending and borrowing experience across chains without relying on centralized validators.
